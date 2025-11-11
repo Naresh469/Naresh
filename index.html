@@ -1,51 +1,223 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Naresh Bikram Official Website</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <!-- Font Awesome icons (free version)-->
-        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
-        <!-- Google fonts-->
-        <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="css/styles.css" rel="stylesheet" />
-    </head>
-    <body id="page-top">
-        <!-- Masthead-->
-        <header class="masthead bg-primary text-white text-center">
-            <div class="container d-flex align-items-center flex-column">
-                <!-- Masthead Avatar Image-->
-                <img class="masthead-avatar mb-5" src="brp.jpg" alt="..." />
-                <!-- Masthead Heading-->
-                <h1 class="masthead-heading text-uppercase mb-0">Naresh Bikram</h1>
-                <!-- Masthead Subheading-->
-                <p class="masthead-subheading font-weight-light mb-0">Student</p>
-                <nav>
-                    <a href="http://youtube.com/NBRNEPAL"><i class="fab fa-youtube"></i></a>
-                    <a href="http://facebook.com/nbk.nareshrai "><i class="fab fa-facebook-f"></i></a>
-                    <a href="http://github.com/naresh469"><i class="fab fa-github"></i></a>
-                </nav>
-              
-               
-            </div>
-        </header>
-        <!-- Copyright Section-->
-        <div class="copyright py-4 text-center text-white">
-            <div class="container"><small>Copyright &copy; 2023 Naresh Bikram</small></div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Naresh Bikram Rai — Mentor</title>
+  <meta name="description" content="Naresh Bikram Rai — Mentor from Mahakulung, Solukhumbu. Services: AI Ready Training, Digital Marketing Training." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f7f8fb; --card:#ffffff; --muted:#6b7280; --accent:#0ea5a8; --glass: rgba(255,255,255,0.6);
+      --radius:14px; --maxw:920px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,var(--bg),#eef2f7);color:#0f172a;display:flex;align-items:center;justify-content:center;padding:28px}
+    .wrap{width:100%;max-width:var(--maxw);}
+
+    header.card{background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:0 8px 30px rgba(16,24,40,0.08);display:flex;gap:24px;align-items:center}
+    .avatar{width:120px;height:120px;border-radius:18px;overflow:hidden;flex:0 0 120px;border:4px solid rgba(14,165,168,0.08)}
+    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
+    .meta{flex:1}
+    h1{margin:0;font-size:22px;letter-spacing:0.2px}
+    .role{color:var(--accent);font-weight:600;margin-top:6px}
+    .location{color:var(--muted);font-size:14px;margin-top:6px}
+    .actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;font-weight:600}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid rgba(14,165,168,0.12)}
+
+    main.grid{display:grid;grid-template-columns:1fr 320px;gap:20px;margin-top:20px}
+    .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 20px rgba(16,24,40,0.06)}
+    .section h2{margin:0 0 10px 0;font-size:16px}
+    ul{padding-left:18px;margin:8px 0}
+    .pill{display:inline-block;padding:8px 10px;border-radius:999px;background:#f1f5f9;margin:6px 6px 0 0;font-size:13px;color:#0f172a}
+    .values{display:flex;flex-wrap:wrap}
+
+    .achievements{display:flex;align-items:center;gap:12px}
+    .achievements .num{font-weight:700;font-size:20px}
+
+    .contact-row{display:flex;gap:8px;align-items:center}
+    .contact-row a{color:var(--accent);text-decoration:none;font-weight:600}
+
+    footer.note{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:880px){
+      main.grid{grid-template-columns:1fr}
+      header.card{flex-direction:row;align-items:center}
+      .avatar{width:96px;height:96px}
+    }
+
+    /* small helpful utils */
+    .small{font-size:13px;color:var(--muted)}
+    .copy{background:transparent;border:1px dashed rgba(14,165,168,0.12);padding:6px 8px;border-radius:8px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="card" role="banner" aria-label="Profile header">
+      <div class="avatar" aria-hidden="false">
+        <img src="image.jpg" alt="Naresh Bikram Rai">
+      </div>
+      <div class="meta">
+        <h1>Naresh Bikram Rai</h1>
+        <div class="role">Mentor</div>
+        <div class="location">Mahakulung, Solukhumbu</div>
+        <div class="actions">
+          <button class="btn" id="contactBtn">Contact</button>
+          <button class="btn ghost" id="copyEmail">Copy Email</button>
+          <a class="btn ghost" href="https://www.facebook.com/nbrnepal" target="_blank" rel="noopener noreferrer">Facebook</a>
         </div>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    </body>
+      </div>
+      <div style="min-width:120px;text-align:right">
+        <div class="achievements">
+          <div style="text-align:right">
+            <div class="small">Subscribers</div>
+            <div class="num">1.5K</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card section" aria-labelledby="about">
+        <h2 id="about">About &amp; Services</h2>
+        <p class="small">Mentor offering practical training and support to beginners and small teams. Focus areas listed below.</p>
+
+        <h3 style="margin-top:12px;margin-bottom:6px">Services</h3>
+        <ul>
+          <li>AI Ready Training</li>
+          <li>Digital Marketing Training</li>
+        </ul>
+
+        <h3 style="margin-top:12px;margin-bottom:6px">Core Values</h3>
+        <div class="values" aria-hidden="false">
+          <span class="pill">Transparent</span>
+          <span class="pill">Collaborative</span>
+          <span class="pill">Unpretentious</span>
+          <span class="pill">Audacious</span>
+        </div>
+
+        <h3 style="margin-top:12px;margin-bottom:6px">Achievements</h3>
+        <p class="small">1.5K Subscribers — Thank you for the support!</p>
+
+        <hr style="margin:18px 0;border:none;border-top:1px solid #eef2f6">
+
+        <h3 style="margin-bottom:8px">Quick actions</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn ghost" id="downloadCv">Download vCard</button>
+          <button class="btn" id="toggleTheme">Toggle Theme</button>
+        </div>
+      </section>
+
+      <aside class="card section" aria-labelledby="contact">
+        <h2 id="contact">Contact</h2>
+        <p class="small">I'd love to hear from you. Use the buttons below to connect quickly.</p>
+
+        <div style="margin-top:10px">
+          <div class="contact-row">
+            <strong>Email:</strong>
+            <span style="flex:1;word-break:break-all;margin-left:8px">rbikram469@gmail.com</span>
+          </div>
+
+          <div style="margin-top:12px" class="contact-row">
+            <strong>Facebook:</strong>
+            <a href="https://www.facebook.com/nbrnepal" target="_blank" rel="noopener noreferrer">facebook.com/nbrnepal</a>
+          </div>
+
+          <form id="contactForm" style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+            <input type="text" id="nameField" placeholder="Your name" style="padding:9px;border-radius:8px;border:1px solid #e6edf3">
+            <input type="email" id="emailField" placeholder="Your email" style="padding:9px;border-radius:8px;border:1px solid #e6edf3">
+            <textarea id="messageField" rows="4" placeholder="Message" style="padding:9px;border-radius:8px;border:1px solid #e6edf3"></textarea>
+            <div style="display:flex;gap:8px">
+              <button class="btn" type="submit">Send (mailto)</button>
+              <button class="btn ghost" type="button" id="clearForm">Clear</button>
+            </div>
+          </form>
+
+          <div style="margin-top:12px;font-size:13px;color:var(--muted)">Address:<br>Mahakulung, Solukhumbu</div>
+
+        </div>
+
+      </aside>
+    </main>
+
+    <footer class="note">Made with ♥ • Mentor • Naresh Bikram Rai</footer>
+  </div>
+
+  <script>
+    // Simple interactivity
+    const contactBtn = document.getElementById('contactBtn');
+    const copyEmail = document.getElementById('copyEmail');
+    const toggleTheme = document.getElementById('toggleTheme');
+    const downloadCv = document.getElementById('downloadCv');
+
+    contactBtn.addEventListener('click', ()=>{
+      window.location.href = 'mailto:rbikram469@gmail.com?subject=Hello%20Naresh';
+    });
+
+    copyEmail.addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText('rbikram469@gmail.com');
+        copyEmail.textContent = 'Copied!';
+        setTimeout(()=> copyEmail.textContent = 'Copy Email', 1600);
+      }catch(e){
+        alert('Please copy manually: rbikram469@gmail.com');
+      }
+    });
+
+    document.getElementById('contactForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('nameField').value.trim();
+      const email = document.getElementById('emailField').value.trim();
+      const msg = document.getElementById('messageField').value.trim();
+      if(!name || !email || !msg){
+        alert('Please fill name, email and message before sending.');
+        return;
+      }
+      const subject = encodeURIComponent('Message from ' + name);
+      const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\n' + msg);
+      window.location.href = `mailto:rbikram469@gmail.com?subject=${subject}&body=${body}`;
+    });
+
+    document.getElementById('clearForm').addEventListener('click', ()=>{
+      document.getElementById('nameField').value = '';
+      document.getElementById('emailField').value = '';
+      document.getElementById('messageField').value = '';
+    });
+
+    toggleTheme.addEventListener('click', ()=>{
+      const isDark = document.documentElement.style.getPropertyValue('--bg') === '#0f172a';
+      if(!isDark){
+        document.documentElement.style.setProperty('--bg','#0f172a');
+        document.documentElement.style.setProperty('--card','#0b1220');
+        document.documentElement.style.setProperty('--muted','#9ca3af');
+        document.documentElement.style.setProperty('--accent','#34d399');
+        document.documentElement.style.setProperty('--glass','rgba(255,255,255,0.04)');
+        document.body.style.color = '#e6eef6';
+      } else {
+        document.documentElement.style.setProperty('--bg','#f7f8fb');
+        document.documentElement.style.setProperty('--card','#ffffff');
+        document.documentElement.style.setProperty('--muted','#6b7280');
+        document.documentElement.style.setProperty('--accent','#0ea5a8');
+        document.documentElement.style.setProperty('--glass','rgba(255,255,255,0.6)');
+        document.body.style.color = '#0f172a';
+      }
+    });
+
+    downloadCv.addEventListener('click', ()=>{
+      // Create a minimal vCard on the fly and prompt download
+      const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:Naresh Bikram Rai\nEMAIL:rbikram469@gmail.com\nADR:;;Mahakulung;Solukhumbu;;Nepal\nTITLE:Mentor\nURL:https://www.facebook.com/nbrnepal\nEND:VCARD`;
+      const blob = new Blob([vcard], {type: 'text/vcard'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'naresh_bikram_rai.vcf';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
 </html>
