@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Naresh Trail Atlas — Interactive Map</title>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+ integrity="sha256-sA+4g0f5g2nFZ8mG6w2gkVgQm3S1Z5VYp2Ro0m0u0+8="
+ crossorigin=""/>
+
+<style>
+  /* Basic cinematic black/white style */
+  :root{--bg:#000;--fg:#fff;--muted:rgba(255,255,255,0.75);--accent:#D8A24E;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family: Poppins, sans-serif;background:var(--bg);color:var(--fg);height:100vh;display:flex;overflow:hidden}
+  /* Left sidebar */
+  .sidebar{
+    width: 20%;
+    min-width:260px;
+    max-width:360px;
+    padding:28px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-right:1px solid rgba(255,255,255,0.06);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .brand{font-weight:700;letter-spacing:2px;font-size:20px}
+  .subtitle{font-size:13px;color:var(--muted)}
+  .search{margin-top:6px}
+  .search input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:var(--fg)}
+  .locations{overflow:auto;padding-top:8px;flex:1}
+  .loc-item{padding:12px;border-radius:8px;margin-bottom:8px;background:transparent;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+  .loc-item:hover{background:rgba(255,255,255,0.02)}
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .footer{font-size:12px;color:var(--muted);padding-top:10px;border-top:1px solid rgba(255,255,255,0.03)}
+  /* Map container */
+  #map {flex:1;height:100vh}
+  /* Popup content custom */
+  .popup-title{font-weight:700;margin-bottom:6px}
+  .popup-thumb{width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:8px}
+  .popup-row{display:flex;gap:8px}
+  .popup-thumb-small{width:48%;height:80px;object-fit:cover;border-radius:6px}
+  .btn{display:inline-block;padding:8px 10px;border-radius:6px;background:var(--accent);color:#000;font-weight:600;text-decoration:none;margin-top:6px}
+  /* small screens */
+  @media (max-width:900px){
+    .sidebar{width:100%;height:260px;position:fixed;z-index:999;left:0;top:0;display:flex;flex-direction:row;gap:12px;overflow:hidden}
+    #map{margin-top:260px}
+    .locations{display:none}
+  }
+</style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div>
+      <div class="brand">NARESH BIKRAM RAI</div>
+      <div class="subtitle">Trail Atlas — Eastern Nepal • Cinematic Archive</div>
+    </div>
+
+    <div class="search">
+      <input id="q" placeholder="Filter places (eg: Salpa, Maiyung)" />
+    </div>
+
+    <div class="locations" id="locationsList">
+      <!-- location items injected here -->
+    </div>
+
+    <div class="footer">
+      <div>Tip: Click a marker on the map or an item here.</div>
+      <div style="margin-top:8px">Replace images in <code>images/</code> and videos in <code>videos/</code></div>
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+ integrity="sha256-o9N1j8m0wqgqYg4gq6XwKXQ6zwFh0s1Xk9qf+8m0w0I="
+ crossorigin=""></script>
+
+<script>
+/* === Sample GeoJSON points (replace coords with accurate ones if you have GPS) === */
+const places = {
+  "type":"FeatureCollection",
+  "features":[
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"salpa",
+        "title":"Salpa (Salpa Pokhari area)",
+        "subtitle":"Rhododendron valley & alpine meadows",
+        "desc":"Cinematic rhododendron slopes and high pasture. Best in spring.",
+        "image":"images/salpa-1.jpg",
+        "thumbs":["images/salpa-1.jpg","images/salpa-2.jpg"],
+        "video":"videos/salpa-short.mp4",
+        "season":"Spring",
+        "difficulty":"Moderate"
+      },
+      "geometry":{"type":"Point","coordinates":[86.870,27.620]}
+    },
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"seudhap",
+        "title":"Seudhap",
+        "subtitle":"Ancient forest & stream",
+        "desc":"Deep forest with small waterfalls and moss-covered stones.",
+        "image":"images/seudhap-1.jpg",
+        "thumbs":["images/seudhap-1.jpg","images/seudhap-2.jpg"],
+        "video":"https://www.youtube.com/embed/YOUR_VIDEO_ID",
+        "season":"Monsoon / Post-monsoon",
+        "difficulty":"Easy"
+      },
+      "geometry":{"type":"Point","coordinates":[86.95,27.72]}
+    },
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"maiyung",
+        "title":"Maiyung Danda",
+        "subtitle":"Sunrise ridge & Mundhum stories",
+        "desc":"A ridge with panoramic sunrise views and Mundhum cultural sites.",
+        "image":"images/maiyung-1.jpg",
+        "thumbs":["images/maiyung-1.jpg","images/maiyung-2.jpg"],
+        "video":"videos/maiyung-short.mp4",
+        "season":"Autumn / Spring",
+        "difficulty":"Moderate-Hard"
+      },
+      "geometry":{"type":"Point","coordinates":[86.80,27.55]}
+    },
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"hongdin",
+        "title":"Hongdin (Khongding)",
+        "subtitle":"Riverside settlements & terraced hills",
+        "desc":"Quiet village by the river with unique terraced farms.",
+        "image":"images/hongdin-1.jpg",
+        "thumbs":["images/hongdin-1.jpg","images/hongdin-2.jpg"],
+        "video":"videos/hongdin-short.mp4",
+        "season":"All year",
+        "difficulty":"Easy"
+      },
+      "geometry":{"type":"Point","coordinates":[86.78,27.63]}
+    },
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"mundhum",
+        "title":"Mundhum Trail (sample point)",
+        "subtitle":"Cultural trail marker",
+        "desc":"Part of the Mundhum Trail—ritual sites and forest sections.",
+        "image":"images/mundhum-1.jpg",
+        "thumbs":["images/mundhum-1.jpg","images/mundhum-2.jpg"],
+        "video":"videos/mundhum-short.mp4",
+        "season":"Spring",
+        "difficulty":"Varies"
+      },
+      "geometry":{"type":"Point","coordinates":[86.83,27.60]}
+    }
+  ]
+};
+
+/* === Initialize map === */
+const map = L.map('map', {zoomControl:true, scrollWheelZoom:true}).setView([27.62,86.85], 11);
+
+/* Minimal grayscale tile - you can swap provider */
+const tile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+/* Custom icon (simple circle using DivIcon) */
+function createIcon(){
+  return L.divIcon({
+    html: '<div style="width:18px;height:18px;border-radius:50%;background:#D8A24E;border:2px solid #fff;box-shadow:0 0 6px rgba(0,0,0,0.6)"></div>',
+    className: ''
+  });
+}
+
+/* Add features to map and to sidebar list */
+const locationsList = document.getElementById('locationsList');
+const markers = {};
+
+places.features.forEach(f=>{
+  const p = f.properties;
+  const coords = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+
+  const popupHtml = `
+    <div style="width:300px">
+      <div class="popup-title">${p.title}</div>
+      <img src="${p.image}" class="popup-thumb" alt="${p.title}" />
+      <div style="font-size:13px;color:#ddd">${p.desc}</div>
+      <div style="margin-top:8px" class="meta">Season: ${p.season} • Difficulty: ${p.difficulty}</div>
+      ${ p.video ? `<a class="btn" href="#" data-video="${p.video}" onclick="openMedia(event)">Watch</a>` : '' }
+    </div>
+  `;
+
+  const marker = L.marker(coords,{icon:createIcon()}).addTo(map).bindPopup(popupHtml, {maxWidth:340});
+  markers[p.id] = marker;
+
+  // Sidebar item
+  const item = document.createElement('div');
+  item.className = 'loc-item';
+  item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle}</div>`;
+  item.onclick = ()=>{ map.setView(coords,13, {animate:true}); marker.openPopup(); };
+  locationsList.appendChild(item);
+});
+
+/* Simple filter */
+document.getElementById('q').addEventListener('input', e=>{
+  const q = e.target.value.toLowerCase();
+  locationsList.innerHTML = '';
+  places.features.forEach(f=>{
+    const p=f.properties;
+    if(!q || p.title.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q)){
+      const item = document.createElement('div');
+      item.className='loc-item';
+      item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle}</div>`;
+      item.onclick = ()=>{ const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]]; map.setView(coords,13); markers[p.id].openPopup(); };
+      locationsList.appendChild(item);
+    }
+  });
+});
+
+/* Open media: if data-video is YouTube embed link, open modal; if local mp4, open new tab or custom player */
+window.openMedia = function(ev){
+  ev.preventDefault();
+  const a = ev.currentTarget;
+  const video = a.dataset.video;
+  if(!video) return;
+  // Simple modal
+  const modal = document.createElement('div');
+  modal.style.position='fixed'; modal.style.inset='0'; modal.style.display='flex'; modal.style.alignItems='center'; modal.style.justifyContent='center';
+  modal.style.background='rgba(0,0,0,0.85)'; modal.style.zIndex=9999;
+  const inner = document.createElement('div'); inner.style.width='90%'; inner.style.maxWidth='960px'; inner.style.background='#000'; inner.style.padding='12px'; inner.style.borderRadius='8px';
+  if(video.startsWith('https://www.youtube.com') || video.includes('youtube')){
+    inner.innerHTML = `<iframe width="100%" height="540" src="${video}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div style="text-align:right;margin-top:8px"><button id="closeBtn" style="padding:8px 10px;border-radius:6px;background:#fff;color:#000;border:none">Close</button></div>`;
+  } else {
+    inner.innerHTML = `<video width="100%" height="480" controls autoplay><source src="${video}" type="video/mp4">Your browser does not support the video tag.</video>
+      <div style="text-align:right;margin-top:8px"><button id="closeBtn" style="padding:8px 10px;border-radius:6px;background:#fff;color:#000;border:none">Close</button></div>`;
+  }
+  modal.appendChild(inner);
+  document.body.appendChild(modal);
+  document.getElementById('closeBtn').onclick = ()=>{ modal.remove(); };
+};
+
+/* OPTIONAL: Fit map to markers bounds */
+const group = L.featureGroup(Object.values(markers));
+map.fitBounds(group.getBounds().pad(0.25));
+
+</script>
+</body>
+</html>
