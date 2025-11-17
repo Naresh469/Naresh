@@ -1,0 +1,80 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "salpa",
+        "title": "Salpa Pokhari Area",
+        "subtitle": "Rhododendron valley & alpine meadows",
+        "desc": "Cinematic rhododendron slopes and high pasture. Best in spring.",
+        "image": "images/salpa-1.jpg",
+        "thumbs": ["images/salpa-1.jpg","images/salpa-2.jpg"],
+        "video": "videos/salpa-short.mp4",
+        "season": "Spring",
+        "difficulty": "Moderate"
+      },
+      "geometry": { "type": "Point", "coordinates": [86.870, 27.620] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "seudhap",
+        "title": "Seudhap",
+        "subtitle": "Ancient forest & stream",
+        "desc": "Deep forest with small waterfalls and moss-covered stones.",
+        "image": "images/seudhap-1.jpg",
+        "thumbs": ["images/seudhap-1.jpg","images/seudhap-2.jpg"],
+        "video": "https://www.youtube.com/embed/YOUR_VIDEO_ID",
+        "season": "Monsoon / Post-monsoon",
+        "difficulty": "Easy"
+      },
+      "geometry": { "type": "Point", "coordinates": [86.95, 27.72] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "maiyung",
+        "title": "Maiyung Danda",
+        "subtitle": "Sunrise ridge & Mundhum stories",
+        "desc": "A ridge with panoramic sunrise views and Mundhum cultural sites.",
+        "image": "images/maiyung-1.jpg",
+        "thumbs": ["images/maiyung-1.jpg","images/maiyung-2.jpg"],
+        "video": "videos/maiyung-short.mp4",
+        "season": "Autumn / Spring",
+        "difficulty": "Moderate-Hard"
+      },
+      "geometry": { "type": "Point", "coordinates": [86.80, 27.55] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hongdin",
+        "title": "Hongdin (Khongding)",
+        "subtitle": "Riverside settlements & terraced hills",
+        "desc": "Quiet village by the river with unique terraced farms.",
+        "image": "images/hongdin-1.jpg",
+        "thumbs": ["images/hongdin-1.jpg","images/hongdin-2.jpg"],
+        "video": "videos/hongdin-short.mp4",
+        "season": "All year",
+        "difficulty": "Easy"
+      },
+      "geometry": { "type": "Point", "coordinates": [86.78, 27.63] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "mundhum",
+        "title": "Mundhum Trail (sample point)",
+        "subtitle": "Cultural trail marker",
+        "desc": "Part of the Mundhum Trail—ritual sites and forest sections.",
+        "image": "images/mundhum-1.jpg",
+        "thumbs": ["images/mundhum-1.jpg","images/mundhum-2.jpg"],
+        "video": "videos/mundhum-short.mp4",
+        "season": "Spring",
+        "difficulty": "Varies"
+      },
+      "geometry": { "type": "Point", "coordinates": [86.83, 27.60] }
+    }
+  ]
+}
