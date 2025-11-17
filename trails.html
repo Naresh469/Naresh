@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Trails — Naresh</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#000;color:#fff}
+.sidebar{position:fixed;left:0;top:0;width:18%;height:100vh;padding:36px 24px;border-right:1px solid rgba(255,255,255,0.06)}
+.nav-item{display:block;color:#fff;opacity:.85;margin:12px 0;text-decoration:none;font-size:14px}
+.content{margin-left:18%;padding:0}
+.section{min-height:80vh;padding:80px 8% 100px;position:relative}
+.hero-section{background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.6));display:flex;align-items:center;justify-content:center}
+.hero-section .title{font-size:44px;letter-spacing:2px;text-align:center}
+.panel{max-width:900px;margin:0 auto;background:rgba(255,255,255,0.03);padding:30px;border-radius:8px}
+.img-full{width:100%;height:60vh;object-fit:cover;border-radius:6px;margin-bottom:18px;display:block}
+.meta{opacity:.8;font-size:14px;margin-bottom:12px}
+.quote{font-family: "Libre Baskerville",serif;font-size:20px;opacity:.9;border-left:3px solid rgba(255,255,255,0.06);padding-left:12px;margin:16px 0}
+.fade-in{opacity:0;transform: translateY(18px);transition: all .7s ease}
+.fade-in.visible{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <h1>NARESH<br>BIKRAM RAI</h1>
+  <a class="nav-item" href="index.html">Home</a>
+  <a class="nav-item" href="map.html">Map</a>
+  <a class="nav-item" href="trails.html">Trails</a>
+  <a class="nav-item" href="microdocs.html">Micro Docs</a>
+  <a class="nav-item" href="photography.html">Photography</a>
+  <a class="nav-item" href="sounds.html">Sounds</a>
+</div>
+
+<div class="content">
+  <!-- Trail 1 -->
+  <section class="section hero-section">
+    <div class="title">Maiyung Danda — Dawn of Rhododendrons</div>
+  </section>
+
+  <section class="section">
+    <div class="panel fade-in">
+      <img class="img-full" src="assets/maiyung-hero.jpg" alt="Maiyung">
+      <div class="meta">Distance • 12 km — Best season: April–May — Difficulty: Moderate</div>
+      <p>यहाँको बिहानको प्रकाश, फूलको सुगन्ध र निन्द्रा भत्किएको मनको आवाज — सबै फिल्म जस्तो लाग्छ। मैले बिहान 4 बजे उठेर यो दृश्य फन्कियो। (Replace with your actual diary)</p>
+      <div class="quote">A cinematic description or memorable dialog line from the trail.</div>
+      <p>Trail notes: route, local house, tea stop, permit info, contact of local guide etc.</p>
+    </div>
+  </section>
+
+  <!-- Trail 2 -->
+  <section class="section" style="background:#050505">
+    <div class="panel fade-in">
+      <img class="img-full" src="assets/salpa-hero.jpg" alt="Salpa">
+      <div class="meta">Salpa Pokhari — Mist & Stones</div>
+      <p>Replace with your personal experience, altitude note, and cinematic links.</p>
+      <a href="place-salpa.html" class="nav-item" style="display:inline-block;margin-top:10px">Open Salpa page</a>
+    </div>
+  </section>
+</div>
+
+<script>
+// IntersectionObserver to reveal panels
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+},{threshold: .12});
+
+document.querySelectorAll('.fade-in').forEach(el=> io.observe(el));
+</script>
+</body>
+</html>
