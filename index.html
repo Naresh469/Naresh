@@ -1,171 +1,275 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ne">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Naresh Bikram Rai – Cinematic Travel Archive</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Naresh Bikram Rai — Cinematic Travel Archive</title>
+
+<!-- Fonts (you can load locally if preferred) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* BASIC RESET */
-* {margin: 0; padding: 0; box-sizing: border-box;}
-body {font-family: 'Poppins', sans-serif; color: #fff; background: #000;}
+/* RESET */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,Arial,sans-serif;background:#000;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
 /* LAYOUT */
-.container {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
+.container{display:flex;height:100vh;width:100vw}
+
+/* LEFT SIDEBAR */
+.sidebar{
+  width:18%;
+  background:#000;
+  padding:40px 28px;
+  border-right:1px solid rgba(255,255,255,0.06);
+  position:fixed;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.sidebar h1{font-size:20px;letter-spacing:2px;line-height:1.05;font-weight:700;}
+.nav-item{color:#fff;text-decoration:none;opacity:0.85;font-size:15px;display:block;transform:translateY(6px);opacity:0;}
+
+/* HERO AREA */
+.hero{
+  margin-left:18%;
+  width:82%;
+  height:100vh;
+  position:relative;
+  overflow:hidden;
+  background:#000;
+}
+.hero video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transform:scale(1.03);
+  filter:brightness(0.6);
+  will-change:transform,filter;
 }
 
-/* LEFT FIXED MENU */
-.sidebar {
-  width: 18%;
-  background: #000;
-  padding: 40px 25px;
-  border-right: 1px solid rgba(255,255,255,0.1);
-  position: fixed;
-  height: 100vh;
+/* HERO OVERLAYS */
+.hero-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;
 }
-
-.sidebar h1 {
-  font-size: 22px;
-  letter-spacing: 2px;
-  margin-bottom: 40px;
-  font-weight: 600;
+.hero-text{
+  text-align:center;pointer-events:auto;
 }
-
-.nav-item {
-  display: block;
-  color: #fff;
-  text-decoration: none;
-  margin: 14px 0;
-  font-size: 15px;
-  opacity: 0.7;
-  transition: 0.3s;
+.hero-text h2{
+  font-size:46px;
+  letter-spacing:3px;
+  margin-bottom:8px;
+  font-weight:700;
+  transform-origin:center;
 }
-
-.nav-item:hover {
-  opacity: 1;
-  letter-spacing: 1px;
-}
-
-/* HERO VIDEO */
-.hero {
-  margin-left: 18%;
-  width: 82%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(60%);
-}
-
-/* HERO TEXT */
-.hero-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.hero-text h2 {
-  font-size: 45px;
-  letter-spacing: 2px;
-  font-weight: 600;
-}
-
-.hero-text p {
-  font-size: 16px;
-  margin-top: 10px;
-  opacity: 0.8;
+.hero-text p{
+  font-size:16px;
+  opacity:0.85;
 }
 
 /* SCROLL INDICATOR */
-.scroll-indicator {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0.6;
-  font-size: 14px;
+.scroll-indicator{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);opacity:0.9;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;
 }
+.mouse{
+  width:28px;height:44px;border-radius:18px;border:1px solid rgba(255,255,255,0.3);display:flex;align-items:flex-start;justify-content:center;padding-top:6px;
+}
+.wheel{width:4px;height:8px;border-radius:3px;background:#fff;opacity:0.85;transform-origin:center}
 
 /* STORY PANEL */
-.story-panel {
-  margin-left: 18%;
-  width: 82%;
-  background: #fff;
-  color: #000;
-  padding: 90px 60px;
+.story-panel{
+  margin-left:18%;
+  width:82%;
+  background:#fff;
+  color:#000;
+  padding:90px 60px;
+}
+.story-panel h3{font-size:32px;margin-bottom:18px}
+.story-panel p{font-size:18px;line-height:1.7;opacity:0.95}
+
+/* RESPONSIVE */
+@media (max-width:900px){
+  .sidebar{display:none}
+  .hero{margin-left:0;width:100%}
+  .story-panel{margin-left:0;width:100%;padding:60px 28px}
 }
 
-.story-panel h3 {
-  font-size: 32px;
-  margin-bottom: 20px;
+/* Reduced motion preference (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  .nav-item{transition:none!important}
+  .hero video{transition:none!important}
 }
-
-.story-panel p {
-  font-size: 18px;
-  line-height: 1.7;
-  opacity: 0.9;
-}
-
 </style>
-
 </head>
 <body>
 
 <div class="container">
-  <!-- LEFT SIDEBAR -->
-  <div class="sidebar">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="Main navigation">
     <h1>NARESH<br>BIKRAM RAI</h1>
+    <a href="index.html" class="nav-item">Home</a>
+    <a href="map.html" class="nav-item">Map</a>
+    <a href="trails.html" class="nav-item">Trails</a>
+    <a href="experiences.html" class="nav-item">Experiences</a>
+    <a href="microdocs.html" class="nav-item">Micro Docs</a>
+    <a href="photography.html" class="nav-item">Photography</a>
+    <a href="sounds.html" class="nav-item">Sounds</a>
+    <a href="stories.html" class="nav-item">Local Stories</a>
+    <a href="blog.html" class="nav-item">Blog</a>
+    <a href="about.html" class="nav-item">About</a>
+    <a href="contact.html" class="nav-item">Contact</a>
+  </aside>
 
-  <a href="index.html" class="nav-item">Home</a>
-<a href="map.html" class="nav-item">Map</a>
-<a href="trails.html" class="nav-item">Trails</a>
-<a href="experiences.html" class="nav-item">Experiences</a>
-<a href="microdocs.html" class="nav-item">Micro Docs</a>
-<a href="photography.html" class="nav-item">Photography</a>
-<a href="sounds.html" class="nav-item">Sounds</a>
-<a href="stories.html" class="nav-item">Local Stories</a>
-<a href="blog.html" class="nav-item">Blog</a>
-<a href="about.html" class="nav-item">About</a>
-<a href="contact.html" class="nav-item">Contact</a>
-
-
-
-  <!-- HERO SECTION -->
-  <div class="hero">
-    <video autoplay muted loop playsinline>
-      <source src="1763313060450172.mp4" type="video/mp4">
+  <!-- HERO -->
+  <main class="hero" role="main" aria-labelledby="site-title">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto">
+      <source src="assets/your-video.mp4" type="video/mp4">
+      <!-- Fallback image for very old browsers -->
+      Your browser does not support the video tag.
     </video>
 
-    <div class="hero-text">
-      <h2>NARESH BIKRAM RAI</h2>
-      <p>Cinematic Travel Archive of Eastern Nepal</p>
+    <div class="hero-overlay">
+      <div class="hero-text" id="site-title">
+        <h2>NARESH BIKRAM RAI</h2>
+        <p>Cinematic Travel Archive of Eastern Nepal</p>
+      </div>
     </div>
 
-    <div class="scroll-indicator">Scroll ↓</div>
-  </div>
+    <div class="scroll-indicator" aria-hidden="true">
+      <div class="mouse"><div class="wheel"></div></div>
+      <div style="font-size:13px;opacity:0.85">Scroll</div>
+    </div>
+  </main>
 
 </div>
 
-<!-- STORY PANEL -->
-<div class="story-panel">
+<!-- STORY PANEL (below fold) -->
+<section class="story-panel" id="story">
   <h3>Welcome to my Cinematic Travel Journal</h3>
   <p>
-    I travel across Eastern Nepal documenting landscapes, trails,
-    cultural stories, natural sounds, and the disappearing memories of our villages.
+    I travel across Eastern Nepal documenting landscapes, trails, cultural stories,
+    natural sounds, and the disappearing memories of our villages.
     This website is my attempt to preserve the beauty, silence,
     and spirit of the Himalayas through cinematic storytelling.
   </p>
-</div>
+</section>
+
+<!-- GSAP + ScrollTrigger CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+/*
+  GSAP animations:
+  - Sidebar menu stagger fade-in
+  - Hero text intro (scale + fade)
+  - Scroll indicator looping bounce
+  - Video parallax + dim on scroll using ScrollTrigger
+  - Story panel slide-up reveal
+  Accessibility: respects prefers-reduced-motion
+*/
+
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReduced) {
+    // If user prefers reduced motion, remove animated transforms and show elements
+    document.querySelectorAll('.nav-item').forEach(n=>{ n.style.opacity = 1; n.style.transform = 'none' });
+    document.querySelector('.hero-text').style.opacity = 1;
+    document.querySelector('.hero-text').style.transform = 'none';
+    document.querySelector('.scroll-indicator').style.display = 'none';
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Sidebar menu stagger in
+  gsap.to('.nav-item', {
+    duration: 0.7,
+    y: 0,
+    opacity: 1,
+    stagger: 0.08,
+    ease: 'power3.out'
+  });
+
+  // Hero text intro
+  gsap.from('.hero-text h2', {
+    duration: 1.0,
+    y: 18,
+    scale: 0.98,
+    opacity: 0,
+    ease: 'power4.out',
+    delay: 0.2
+  });
+  gsap.from('.hero-text p', {
+    duration: 0.9,
+    y: 12,
+    opacity: 0,
+    ease: 'power3.out',
+    delay: 0.45
+  });
+
+  // Scroll indicator subtle up-down loop
+  gsap.to('.wheel', {
+    y: 8,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut',
+    duration: 0.9
+  });
+
+  // Hero video parallax & dim on scroll
+  const video = document.getElementById('hero-video');
+
+  gsap.to(video, {
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 0.8
+    },
+    // slight scale up for parallax feel and reduce brightness as scroll progresses
+    scale: 1.06,
+    filter: 'brightness(0.45)',
+    ease: 'none'
+  });
+
+  // Parallax move (subtle y)
+  gsap.to(video, {
+    yPercent: -6,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 0.8
+    }
+  });
+
+  // Story panel reveal (slide up)
+  gsap.from('.story-panel', {
+    y: 60,
+    opacity: 0,
+    ease: 'power3.out',
+    duration: 0.9,
+    scrollTrigger: {
+      trigger: '#story',
+      start: 'top 75%',
+      toggleActions: 'play none none reverse'
+    }
+  });
+
+  // Optional: fade out scroll-indicator when user starts scrolling
+  ScrollTrigger.create({
+    start: 'top -20',
+    onEnter: ()=> gsap.to('.scroll-indicator', {opacity:0, duration:0.6}),
+    onLeaveBack: ()=> gsap.to('.scroll-indicator', {opacity:1, duration:0.6})
+  });
+
+})();
+</script>
 
 </body>
 </html>
