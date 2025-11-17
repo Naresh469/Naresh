@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ne">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Naresh Trail Atlas — Advanced Map</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{--bg:#000;--fg:#fff;--muted:rgba(255,255,255,0.75);--accent:#D8A24E;}
+  body{margin:0;font-family:Poppins, sans-serif;background:var(--bg);color:var(--fg);height:100vh;display:flex;overflow:hidden}
+  .sidebar{width:22%;min-width:280px;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
+  .brand{font-weight:700;letter-spacing:2px;font-size:20px}
+  .subtitle{font-size:13px;color:var(--muted)}
+  .search input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:var(--fg)}
+  .locations{overflow:auto;padding-top:12px;flex:1}
+  .loc-item{padding:12px;border-radius:8px;margin-bottom:8px;background:transparent;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+  .loc-item:hover{background:rgba(255,255,255,0.02)}
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  #map{flex:1;height:100vh;position:relative}
+  .leaflet-tile { filter: grayscale(1) contrast(0.9) brightness(0.95); } /* cinematic grayscale */
+  /* Popup gallery */
+  .popup-thumb{width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:8px}
+  .popup-thumbs-row{display:flex;gap:6px}
+  .popup-thumb-small{width:48%;height:80px;object-fit:cover;border-radius:6px}
+  .btn{display:inline-block;padding:8px 10px;border-radius:6px;background:var(--accent);color:#000;font-weight:600;text-decoration:none;margin-top:8px}
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,0.90);display:flex;align-items:center;justify-content:center;z-index:9999}
+  .modal-inner{width:92%;max-width:1000px;background:#000;padding:10px;border-radius:8px}
+  .modal-close{position:absolute;top:18px;right:18px;background:#fff;border-radius:6px;padding:8px 10px;color:#000;border:none}
+  .gallery-img{width:100%;height:540px;object-fit:cover;border-radius:6px}
+  @media (max-width:900px){ .sidebar{width:100%;height:260px;position:fixed;top:0;left:0;z-index:999} #map{margin-top:260px} }
+</style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div><div class="brand">NARESH BIKRAM RAI</div><div class="subtitle">Trail Atlas — Eastern Nepal</div></div>
+    <div class="search" style="margin-top:10px;"><input id="q" placeholder="Filter places, eg: Salpa, Maiyung" /></div>
+    <div class="locations" id="locationsList"></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:10px">Replace <code>places.geojson</code>, <code>images/</code>, <code>videos/</code> with your files.</div>
+  </div>
+
+  <div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* --- Utility: fetch GeoJSON and render --- */
+async function init(){
+  // Load GeoJSON file (places.geojson in same folder)
+  let data;
+  try{
+    const res = await fetch('places.geojson');
+    data = await res.json();
+  }catch(e){
+    console.warn('Could not load places.geojson — falling back to embedded sample.');
+    data = null;
+  }
+
+  // Initialize map
+  const map = L.map('map', {zoomControl:true}).setView([27.62,86.85], 11);
+
+  // Use OpenStreetMap tiles but apply CSS grayscale (in style above)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Create marker icon
+  const icon = L.divIcon({html:'<div style="width:18px;height:18px;border-radius:50%;background:#D8A24E;border:2px solid #fff"></div>', className:''});
+
+  // If no geojson loaded, use fallback small sample
+  if(!data){
+    data = {
+      "type":"FeatureCollection",
+      "features":[
+        {
+          "type":"Feature","properties":{"id":"salpa","title":"Salpa Pokhari Area","subtitle":"Rhododendron valley","desc":"Beautiful rhododendron slopes.","image":"images/salpa-1.jpg","thumbs":["images/salpa-1.jpg","images/salpa-2.jpg"],"video":"videos/salpa-short.mp4","season":"Spring","difficulty":"Moderate"},"geometry":{"type":"Point","coordinates":[86.870,27.620]}
+        }
+      ]
+    };
+  }
+
+  const markers = {};
+  const listEl = document.getElementById('locationsList');
+
+  data.features.forEach(f=>{
+    const p = f.properties;
+    const coords = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+
+    // build popup html (with small gallery)
+    let thumbsHtml = '';
+    if(Array.isArray(p.thumbs)){
+      thumbsHtml = `<div class="popup-thumbs-row">` + p.thumbs.slice(0,2).map(t=>`<img src="${t}" class="popup-thumb-small" />`).join('') + `</div>`;
+    }
+    const popup = `
+      <div style="width:320px">
+        <div style="font-weight:700;margin-bottom:6px">${p.title}</div>
+        <img src="${p.image}" class="popup-thumb" />
+        <div style="font-size:13px;color:#ddd">${p.desc}</div>
+        ${thumbsHtml}
+        <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.8)">Season: ${p.season || '-'} • Difficulty: ${p.difficulty || '-'}</div>
+        <div style="margin-top:8px">
+          ${ p.video ? `<a class="btn" href="#" data-video="${p.video}" onclick="openMedia(event)">Watch</a>` : '' }
+          ${ p.thumbs && p.thumbs.length ? `<a class="btn" href="#" style="margin-left:8px" data-gallery='${JSON.stringify(p.thumbs)}' onclick="openGallery(event)">Gallery</a>` : '' }
+        </div>
+      </div>
+    `;
+
+    const m = L.marker(coords,{icon}).addTo(map).bindPopup(popup, {maxWidth:360});
+    markers[p.id] = m;
+
+    const item = document.createElement('div');
+    item.className = 'loc-item';
+    item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle}</div>`;
+    item.onclick = ()=>{ map.setView(coords,13); m.openPopup(); };
+    listEl.appendChild(item);
+  });
+
+  // fit bounds
+  const group = L.featureGroup(Object.values(markers));
+  if(Object.values(markers).length) map.fitBounds(group.getBounds().pad(0.2));
+
+  // filter
+  document.getElementById('q').addEventListener('input', (e)=>{
+    const q = e.target.value.toLowerCase();
+    listEl.innerHTML = '';
+    data.features.forEach(f=>{
+      const p = f.properties;
+      if(!q || p.title.toLowerCase().includes(q) || (p.subtitle && p.subtitle.toLowerCase().includes(q))){
+        const item = document.createElement('div');
+        item.className='loc-item';
+        item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle || ''}</div>`;
+        item.onclick = ()=>{ const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]]; map.setView(coords,13); markers[p.id].openPopup(); };
+        listEl.appendChild(item);
+      }
+    });
+  });
+}
+init();
+
+/* --- Modal functions (global so popup buttons can call) --- */
+window.openGallery = function(ev){
+  ev.preventDefault();
+  const btn = ev.currentTarget;
+  const imgs = JSON.parse(btn.getAttribute('data-gallery') || '[]');
+  if(!imgs.length) return;
+  const modal = document.createElement('div'); modal.className='modal';
+  const inner = document.createElement('div'); inner.className='modal-inner';
+  let idx = 0;
+  inner.innerHTML = `<img id="galleryImg" class="gallery-img" src="${imgs[idx]}"/><div style="display:flex;justify-content:space-between;margin-top:8px"><button id="prevBtn" style="padding:8px 10px;border-radius:6px">Prev</button><button id="nextBtn" style="padding:8px 10px;border-radius:6px">Next</button></div><div style="text-align:right;margin-top:8px"><button id="closeBtn" class="modal-close">Close</button></div>`;
+  modal.appendChild(inner); document.body.appendChild(modal);
+  document.getElementById('prevBtn').onclick = ()=>{ idx = (idx-1+imgs.length)%imgs.length; document.getElementById('galleryImg').src = imgs[idx]; };
+  document.getElementById('nextBtn').onclick = ()=>{ idx = (idx+1)%imgs.length; document.getElementById('galleryImg').src = imgs[idx]; };
+  document.getElementById('closeBtn').onclick = ()=>{ modal.remove(); };
+};
+
+window.openMedia = function(ev){
+  ev.preventDefault();
+  const a = ev.currentTarget;
+  const video = a.dataset.video;
+  if(!video) return;
+  const modal = document.createElement('div'); modal.className='modal';
+  const inner = document.createElement('div'); inner.className='modal-inner';
+  if(video.includes('youtube') || video.includes('youtu.be')){
+    // ensure embed url
+    let embed = video;
+    if(video.includes('watch?v=')) embed = video.replace('watch?v=','embed/');
+    inner.innerHTML = `<iframe width="100%" height="540" src="${embed}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div style="text-align:right;margin-top:8px"><button id="closeBtn" class="modal-close">Close</button></div>`;
+  } else {
+    inner.innerHTML = `<video width="100%" height="480" controls autoplay><source src="${video}" type="video/mp4">Your browser does not support the video tag.</video><div style="text-align:right;margin-top:8px"><button id="closeBtn" class="modal-close">Close</button></div>`;
+  }
+  modal.appendChild(inner); document.body.appendChild(modal);
+  document.getElementById('closeBtn').onclick = ()=>{ modal.remove(); };
+};
+</script>
+</body>
+</html>
