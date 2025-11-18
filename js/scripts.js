@@ -59,3 +59,6 @@ gsap.utils.toArray(".reveal").forEach((el) => {
     }
   });
 });
+function toggleSidebar() {
+    document.querySelector(".sidebar").classList.toggle("open");
+}
