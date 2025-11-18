@@ -77,3 +77,10 @@ document.addEventListener("click", (e) => {
         menuBtn.classList.remove("active");
     }
 });
+// MOBILE SIDEBAR TOGGLE
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.querySelector(".sidebar");
+
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("active");
+});
