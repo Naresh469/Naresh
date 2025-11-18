@@ -79,7 +79,7 @@ document.addEventListener("click", (e) => {
 });
 // MOBILE SIDEBAR TOGGLE
 const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.querySelector(".sidebar");
+const sidebar = document.getElementById("sidebar");
 
 menuBtn.addEventListener("click", () => {
   sidebar.classList.toggle("active");
