@@ -1,0 +1,151 @@
+/* GLOBAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: #0c0c0c;
+  color: #eee;
+  overflow-x: hidden;
+}
+
+a {
+  color: #ddd;
+  text-decoration: none;
+}
+
+/* LAYOUT */
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: #111;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  border-right: 1px solid #222;
+}
+
+.sidebar h1 {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #fff;
+}
+
+.nav-item {
+  font-size: 15px;
+  padding: 6px 0;
+  opacity: 0.85;
+  transition: 0.25s ease;
+}
+
+.nav-item:hover {
+  opacity: 1;
+  color: #fff;
+}
+
+/* HERO SECTION */
+.hero {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-text {
+  text-align: center;
+}
+
+.hero-text h2 {
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+.hero-text p {
+  margin-top: 10px;
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+/* SCROLL INDICATOR */
+.scroll-indicator {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+}
+
+.mouse {
+  width: 24px;
+  height: 38px;
+  border: 2px solid #fff;
+  border-radius: 14px;
+  margin: 0 auto 6px auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.wheel {
+  width: 4px;
+  height: 8px;
+  background: #fff;
+  border-radius: 3px;
+  animation: scroll 1.2s infinite linear;
+}
+
+@keyframes scroll {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(6px); }
+}
+
+/* STORY SECTION */
+.story-panel {
+  padding: 100px 260px 100px 260px;
+  background: #111;
+  margin-left: 260px;
+}
+
+.story-panel h3 {
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.story-panel p {
+  line-height: 1.6;
+  font-size: 16px;
+  max-width: 650px;
+}
