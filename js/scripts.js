@@ -59,6 +59,21 @@ gsap.utils.toArray(".reveal").forEach((el) => {
     }
   });
 });
-function toggleSidebar() {
-    document.querySelector(".sidebar").classList.toggle("open");
+// SIDEBAR TOGGLE (MOBILE HAMBURGER MENU)
+const menuBtn = document.querySelector(".menu-btn");
+const sidebar = document.querySelector(".sidebar");
+
+if (menuBtn) {
+    menuBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        menuBtn.classList.toggle("active");
+    });
 }
+
+// Close sidebar when clicking outside (optional)
+document.addEventListener("click", (e) => {
+    if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+        sidebar.classList.remove("open");
+        menuBtn.classList.remove("active");
+    }
+});
