@@ -1,74 +1,61 @@
-/*!
-* Start Bootstrap - Freelancer v7.0.3 (https://startbootstrap.com/theme/freelancer)
-* Copyright 2013-2021 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-freelancer/blob/master/LICENSE)
-*/
-//
-// Scripts
-// 
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger);
 
-window.addEventListener('DOMContentLoaded', event => {
-
-    // Navbar shrink function
-    var navbarShrink = function () {
-        const navbarCollapsible = document.body.querySelector('#mainNav');
-        if (!navbarCollapsible) {
-            return;
-        }
-        if (window.scrollY === 0) {
-            navbarCollapsible.classList.remove('navbar-shrink')
-        } else {
-            navbarCollapsible.classList.add('navbar-shrink')
-        }
-
-    };
-
-    // Shrink the navbar 
-    navbarShrink();
-
-    // Shrink the navbar when page is scrolled
-    document.addEventListener('scroll', navbarShrink);
-
-    // Activate Bootstrap scrollspy on the main nav element
-    const mainNav = document.body.querySelector('#mainNav');
-    if (mainNav) {
-        new bootstrap.ScrollSpy(document.body, {
-            target: '#mainNav',
-            offset: 72,
-        });
-    };
-
-    // Collapse responsive navbar when toggler is visible
-    const navbarToggler = document.body.querySelector('.navbar-toggler');
-    const responsiveNavItems = [].slice.call(
-        document.querySelectorAll('#navbarResponsive .nav-link')
-    );
-    responsiveNavItems.map(function (responsiveNavItem) {
-        responsiveNavItem.addEventListener('click', () => {
-            if (window.getComputedStyle(navbarToggler).display !== 'none') {
-                navbarToggler.click();
-            }
-        });
-    });
-
+// Intro animation for sidebar items
+gsap.to(".nav-item", {
+  opacity: 1,
+  y: 0,
+  duration: 0.8,
+  stagger: 0.08,
+  delay: 0.2,
+  ease: "power3.out"
 });
-document.addEventListener("DOMContentLoaded", () => {
 
-  gsap.registerPlugin(ScrollTrigger);
+// Hero text animation
+gsap.from(".hero-text h2", {
+  opacity: 0,
+  y: 25,
+  duration: 1.2,
+  ease: "power3.out"
+});
 
-  gsap.utils.toArray(".reveal").forEach((section) => {
-    gsap.from(section, {
-      opacity: 0,
-      y: 40,
-      duration: 1.2,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: section,
-        start: "top 85%",
-        end: "top 40%",
-        toggleActions: "play none none reverse"
-      }
-    });
+gsap.from(".hero-text p", {
+  opacity: 0,
+  y: 18,
+  delay: 0.2,
+  duration: 1.2,
+  ease: "power3.out"
+});
+
+// Scroll indicator wheel animation
+gsap.to(".wheel", {
+  y: 6,
+  opacity: 0.4,
+  repeat: -1,
+  yoyo: true,
+  duration: 1.1,
+  ease: "power1.inOut"
+});
+
+// Subtle hero video zoom effect
+gsap.to("#hero-video", {
+  scale: 1,
+  filter: "brightness(0.8)",
+  duration: 1.4,
+  ease: "power3.out"
+});
+
+// Scroll reveal for sections
+gsap.utils.toArray(".reveal").forEach((el) => {
+  gsap.from(el, {
+    opacity: 0,
+    y: 60,
+    duration: 1.3,
+    ease: "power3.out",
+    scrollTrigger: {
+      trigger: el,
+      start: "top 85%",
+      toggleActions: "play none none reverse"
+    }
   });
-
 });
