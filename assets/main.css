@@ -29,7 +29,7 @@ body {
   left: 0;
   border-right: 1px solid #222;
   transition: transform 0.35s ease;
-  z-index: 9999;   /* FIX */
+  z-index: 99999; /* SUPER HIGH */
 }
 
 .sidebar h1 {
@@ -52,19 +52,22 @@ body {
   padding-left: 4px;
 }
 
-/* CONTENT AREA (hero) */
+/* HERO */
 .hero {
   margin-left: 260px;
   width: calc(100% - 260px);
   height: 100vh;
-  position: relative; 
-  z-index: 1;   /* FIX */
+  position: relative;
+  z-index: 1;
 }
 
+/* 👉 IMPORTANT FIX */
 .hero video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: relative;
+  z-index: -1;  /* NOW VIDEO ALWAYS UNDER SIDEBAR */
 }
 
 .hero-overlay {
@@ -78,6 +81,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
+  z-index: 2;
 }
 
 .hero-text h2 {
@@ -105,7 +109,7 @@ body {
   position: fixed;
   top: 18px;
   left: 18px;
-  z-index: 9999;
+  z-index: 999999;  /* ALSO ABOVE EVERYTHING */
   font-size: 28px;
   background: #000000aa;
   padding: 8px 12px;
@@ -121,7 +125,7 @@ body {
   min-height: 50vh;
 }
 
-/* ============== MOBILE RESPONSIVE ============== */
+/* ============== MOBILE ============== */
 @media (max-width: 850px) {
 
   .hamburger {
