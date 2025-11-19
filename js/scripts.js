@@ -1,7 +1,7 @@
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
 
-// Intro animation for sidebar items
+// Sidebar nav animation
 gsap.to(".nav-item", {
   opacity: 1,
   y: 0,
@@ -12,22 +12,10 @@ gsap.to(".nav-item", {
 });
 
 // Hero text animation
-gsap.from(".hero-text h2", {
-  opacity: 0,
-  y: 25,
-  duration: 1.2,
-  ease: "power3.out"
-});
+gsap.from(".hero-text h2", { opacity: 0, y: 25, duration: 1.2, ease: "power3.out" });
+gsap.from(".hero-text p", { opacity: 0, y: 18, delay: 0.2, duration: 1.2, ease: "power3.out" });
 
-gsap.from(".hero-text p", {
-  opacity: 0,
-  y: 18,
-  delay: 0.2,
-  duration: 1.2,
-  ease: "power3.out"
-});
-
-// Scroll indicator wheel animation
+// Scroll indicator animation
 gsap.to(".wheel", {
   y: 6,
   opacity: 0.4,
@@ -37,15 +25,7 @@ gsap.to(".wheel", {
   ease: "power1.inOut"
 });
 
-// Subtle hero video zoom effect
-gsap.to("#hero-video", {
-  scale: 1,
-  filter: "brightness(0.8)",
-  duration: 1.4,
-  ease: "power3.out"
-});
-
-// Scroll reveal for sections
+// Section Reveal Animation
 gsap.utils.toArray(".reveal").forEach((el) => {
   gsap.from(el, {
     opacity: 0,
@@ -59,28 +39,22 @@ gsap.utils.toArray(".reveal").forEach((el) => {
     }
   });
 });
-// SIDEBAR TOGGLE (MOBILE HAMBURGER MENU)
-const menuBtn = document.querySelector(".menu-btn");
+
+// ------------------------------
+// MOBILE SIDEBAR TOGGLE
+// ------------------------------
+const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.querySelector(".sidebar");
 
-if (menuBtn) {
-    menuBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("open");
-        menuBtn.classList.toggle("active");
-    });
-}
-
-// Close sidebar when clicking outside (optional)
-document.addEventListener("click", (e) => {
-    if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
-        sidebar.classList.remove("open");
-        menuBtn.classList.remove("active");
-    }
-});
-// MOBILE SIDEBAR TOGGLE
-const menuBtn = document.getElementById("menuBtn");
-const sidebar = document.getElementById("sidebar");
-
 menuBtn.addEventListener("click", () => {
-  sidebar.classList.toggle("active");
+  sidebar.classList.toggle("open");
+  menuBtn.classList.toggle("active");
+});
+
+// Close sidebar when clicking outside
+document.addEventListener("click", (e) => {
+  if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+    sidebar.classList.remove("open");
+    menuBtn.classList.remove("active");
+  }
 });
