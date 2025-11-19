@@ -1,7 +1,7 @@
-// Register GSAP plugins
+// GSAP animations
 gsap.registerPlugin(ScrollTrigger);
 
-// Intro animation for sidebar items
+// Sidebar reveal
 gsap.to(".nav-item", {
   opacity: 1,
   y: 0,
@@ -27,7 +27,7 @@ gsap.from(".hero-text p", {
   ease: "power3.out"
 });
 
-// Scroll indicator wheel animation
+// Scroll indicator animation
 gsap.to(".wheel", {
   y: 6,
   opacity: 0.4,
@@ -37,33 +37,11 @@ gsap.to(".wheel", {
   ease: "power1.inOut"
 });
 
-// Subtle hero video zoom effect
-gsap.to("#hero-video", {
-  scale: 1,
-  filter: "brightness(0.8)",
-  duration: 1.4,
-  ease: "power3.out"
-});
+// =====================
+// MOBILE SIDEBAR TOGGLE
+// =====================
 
-// Scroll reveal for sections
-gsap.utils.toArray(".reveal").forEach((el) => {
-  gsap.from(el, {
-    opacity: 0,
-    y: 60,
-    duration: 1.3,
-    ease: "power3.out",
-    scrollTrigger: {
-      trigger: el,
-      start: "top 85%",
-      toggleActions: "play none none reverse"
-    }
-  });
-});
-
-
-// ============================
-//   MOBILE SIDEBAR TOGGLE
-// ============================
+// सही ID selection
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 
