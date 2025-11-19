@@ -12,12 +12,6 @@ body {
   overflow-x: hidden;
 }
 
-/* CONTAINER */
-.container {
-  display: flex;
-  width: 100%;
-}
-
 /* SIDEBAR */
 .sidebar {
   width: 260px;
@@ -29,27 +23,21 @@ body {
   left: 0;
   border-right: 1px solid #222;
   transition: transform 0.35s ease;
-  z-index: 99999; /* SUPER HIGH */
+  z-index: 999999;   /* ALWAYS ABOVE */
 }
 
-.sidebar h1 {
-  font-size: 26px;
-  line-height: 1.2;
-  margin-bottom: 40px;
-}
-
-.sidebar .nav-item {
-  display: block;
-  padding: 12px 0;
-  font-size: 15px;
-  text-decoration: none;
-  color: #ddd;
-  transition: 0.2s;
-}
-
-.sidebar .nav-item:hover {
-  color: white;
-  padding-left: 4px;
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 1000000;   /* TOP MOST */
+  font-size: 28px;
+  background: #000000aa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* HERO */
@@ -58,18 +46,21 @@ body {
   width: calc(100% - 260px);
   height: 100vh;
   position: relative;
-  z-index: 1;
+  z-index: 0 !important;   /* FIX */
 }
 
-/* 👉 IMPORTANT FIX */
+/* HERO VIDEO ALWAYS BEHIND */
 .hero video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  position: relative;
-  z-index: -1;  /* NOW VIDEO ALWAYS UNDER SIDEBAR */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -2 !important;  /* FIX */
 }
 
+/* HERO OVERLAY */
 .hero-overlay {
   position: absolute;
   top: 0;
@@ -81,43 +72,10 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  z-index: 2;
+  z-index: 1;
 }
 
-.hero-text h2 {
-  font-size: 42px;
-  font-weight: 600;
-}
-
-.hero-text p {
-  font-size: 18px;
-  opacity: 0.8;
-  margin-top: 8px;
-}
-
-/* SCROLL INDICATOR */
-.scroll-indicator {
-  position: absolute;
-  bottom: 30px;
-  width: 100%;
-  text-align: center;
-}
-
-/* MOBILE MENU ICON */
-.hamburger {
-  display: none;
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  z-index: 999999;  /* ALSO ABOVE EVERYTHING */
-  font-size: 28px;
-  background: #000000aa;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* STORY SECTION */
+/* STORY */
 .story-panel {
   margin-left: 260px;
   padding: 80px 40px;
@@ -125,7 +83,7 @@ body {
   min-height: 50vh;
 }
 
-/* ============== MOBILE ============== */
+/* MOBILE */
 @media (max-width: 850px) {
 
   .hamburger {
@@ -144,7 +102,7 @@ body {
     margin-left: 0;
     width: 100%;
   }
-
+  
   .story-panel {
     margin-left: 0;
   }
