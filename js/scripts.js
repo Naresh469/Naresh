@@ -37,7 +37,11 @@ gsap.to(".wheel", {
   ease: "power1.inOut"
 });
 
+// =====================
 // MOBILE SIDEBAR TOGGLE
+// =====================
+
+// सही ID selection
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 
