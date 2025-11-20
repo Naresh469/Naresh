@@ -1,175 +1,307 @@
 <!doctype html>
-<html lang="ne">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>नरेश ट्रेल एटलास — पूर्वी नेपाल</title>
+<title>Naresh Trail Atlas — Interactive Map</title>
 
+<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Nepali:wght@400;500;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-  :root{--bg:#000;--fg:#fff;--muted:rgba(255,255,255,0.75);--accent:#D8A24E;}
-  body{margin:0;font-family:'Noto Sans Nepali', 'Poppins', sans-serif;background:var(--bg);color:var(--fg);height:100vh;display:flex;overflow:hidden}
-  .sidebar{width:22%;min-width:280px;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column}
-  .brand{font-weight:700;letter-spacing:2px;font-size:20px}
-  .subtitle{font-size:13px;color:var(--muted)}
-  .search input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.04);color:var(--fg)}
-  .locations{overflow:auto;padding-top:12px;flex:1}
-  .loc-item{padding:12px;border-radius:8px;margin-bottom:8px;background:transparent;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
-  .loc-item:hover{background:rgba(255,255,255,0.02)}
-  .meta{font-size:12px;color:var(--muted);margin-top:6px}
-  #map{flex:1;height:100vh;position:relative}
-  .leaflet-tile { filter: grayscale(1) contrast(0.9) brightness(0.95); }
-  .popup-thumb{width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:8px}
-  .popup-thumbs-row{display:flex;gap:6px}
-  .popup-thumb-small{width:48%;height:80px;object-fit:cover;border-radius:6px}
-  .btn{display:inline-block;padding:8px 10px;border-radius:6px;background:var(--accent);color:#000;font-weight:600;text-decoration:none;margin-top:8px}
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,0.90);display:flex;align-items:center;justify-content:center;z-index:9999}
-  .modal-inner{width:92%;max-width:1000px;background:#000;padding:10px;border-radius:8px}
-  .modal-close{position:absolute;top:18px;right:18px;background:#fff;border-radius:6px;padding:8px 10px;color:#000;border:none}
-  .gallery-img{width:100%;height:540px;object-fit:cover;border-radius:6px}
-  @media (max-width:900px){ .sidebar{width:100%;height:260px;position:fixed;top:0;left:0;z-index:999} #map{margin-top:260px} }
+/* ------------------------------
+   GLOBAL AESTHETIC 
+-------------------------------*/
+:root{
+  --bg:#000;
+  --fg:#fff;
+  --muted:rgba(255,255,255,0.75);
+  --accent:#D8A24E;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Poppins, sans-serif;
+  background:var(--bg);
+  color:var(--fg);
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ------------------------------
+   TOP NAVIGATION BAR
+-------------------------------*/
+.topnav{
+  width:100%;
+  padding:16px 28px;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(4px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;
+  gap:22px;
+  flex-wrap:wrap;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:9999;
+}
+.topnav a{
+  color:var(--fg);
+  text-decoration:none;
+  font-size:14px;
+  opacity:0.85;
+}
+.topnav a:hover{opacity:1}
+
+/* ------------------------------
+   PAGE LAYOUT
+-------------------------------*/
+.page{
+  display:flex;
+  margin-top:70px;
+  height:calc(100vh - 70px);
+}
+
+/* ------------------------------
+   LEFT SIDEBAR (Locations + Search)
+-------------------------------*/
+.sidebar{
+  width:310px;
+  padding:28px;
+  border-right:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.02);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.brand{font-weight:700;letter-spacing:2px;font-size:20px}
+.subtitle{font-size:13px;color:var(--muted)}
+
+.search input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.04);
+  color:var(--fg);
+}
+
+.locations{
+  flex:1;
+  overflow:auto;
+}
+.loc-item{
+  padding:12px;
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,0.04);
+}
+.loc-item:hover{
+  background:rgba(255,255,255,0.05);
+}
+
+/* ------------------------------
+   MAP
+-------------------------------*/
+#map{
+  flex:1;
+  height:100%;
+  width:100%;
+}
+
+/* ------------------------------
+   FUTURISTIC SECTIONS (Timeline, Culture, Micro Docs)
+-------------------------------*/
+.section{
+  padding:60px 40px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.section h2{
+  font-size:26px;
+  margin-bottom:20px;
+  letter-spacing:1.5px;
+}
+.card{
+  background:rgba(255,255,255,0.04);
+  padding:20px;
+  border-radius:8px;
+  margin-bottom:14px;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+  .page{flex-direction:column}
+  .sidebar{
+    width:100%;
+    height:260px;
+    overflow:hidden;
+  }
+  #map{
+    height:60vh;
+  }
+}
 </style>
 </head>
 <body>
 
+<!-- --------------------------
+     TOP NAVIGATION BAR
+--------------------------- -->
+<div class="topnav">
+  <a href="index.html">Home</a>
+  <a href="map.html">Map</a>
+  <a href="trails.html">Trails</a>
+  <a href="experiences.html">Experiences</a>
+  <a href="microdocs.html">Micro Docs</a>
+  <a href="photography.html">Photography</a>
+  <a href="sounds.html">Sounds</a>
+  <a href="stories.html">Local Stories</a>
+  <a href="blog.html">Blog</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<!-- --------------------------
+     PAGE WRAPPER
+--------------------------- -->
+<div class="page">
+    <!-- LEFT SIDEBAR -->
   <div class="sidebar">
-    <div><div class="brand">नरेश बिक्रम राई</div><div class="subtitle">ट्रेल एटलास — पूर्वी नेपालका लुकेका रत्नहरू</div></div>
-    <div class="search" style="margin-top:10px;"><input id="q" placeholder="ठाउँहरू फिल्टर गर्नुहोस्, जस्तै: साल्पा, पाथीभरा" /></div>
+    <div>
+      <div class="brand">NARESH BIKRAM RAI</div>
+      <div class="subtitle">Trail Atlas — Eastern Nepal</div>
+    </div>
+
+    <div class="search">
+      <input id="q" placeholder="Search (example: Salpa, Maiyung, Seudhap)">
+    </div>
+
     <div class="locations" id="locationsList"></div>
-    <div style="font-size:12px;color:var(--muted);margin-top:10px">यो पूर्ण रूपमा तयार छ — इन्टरनेट चाहिन्छ इमेजहरूको लागि।</div>
   </div>
 
+  <!-- INTERACTIVE MAP -->
   <div id="map"></div>
+</div> <!-- END OF PAGE WRAPPER -->
+  <!-- FUTURISTIC SECTIONS -->
 
+<!-- (B) Travel Memory Timeline -->
+<section class="section">
+  <h2>Travel Memory Timeline</h2>
+  <div class="card">APRIL 2024 – Salpa: Rhododendron bloom + alpine silence</div>
+  <div class="card">JUNE 2024 – Seudhap: Waterfalls + deep forest cinematic</div>
+  <div class="card">AUG 2024 – Hongdin: Village life, river wind, local stories</div>
+</section>
+
+<!-- (C) Micro Documentary Archive -->
+<section class="section">
+  <h2>Micro Documentary Episodes</h2>
+  <div class="card">Episode 01 — Salpa Rhododendron (5 min)</div>
+  <div class="card">Episode 02 — Mundhum Trail Sacred Points (7 min)</div>
+  <div class="card">Episode 03 — Seudhap Forest Mood (4 min)</div>
+</section>
+
+<!-- (D) Local Culture Archive -->
+<section class="section">
+  <h2>Local Culture & Living Heritage</h2>
+  <div class="card">• Origin of “Salpa” name</div>
+  <div class="card">• Mundhum story — Maiyung ridge</div>
+  <div class="card">• Lost farming methods of Hongdin</div>
+</section>
+
+<!-- (F) Travel Intelligence Section -->
+<section class="section">
+  <h2>Travel Intelligence</h2>
+  <div class="card">Best Week to Visit Salpa: April 10–20</div>
+  <div class="card">Best Sky for Maiyung Sunrise: November–January</div>
+  <div class="card">Risk Map: Leeches heavy in Seudhap during monsoon</div>
+</section>
+  <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-const geoData = {
+/* ===== PLACES DATA ===== */
+const places = {
   "type":"FeatureCollection",
   "features":[
     {
-      "type":"Feature","properties":{"id":"salpa","title":"साल्पा पोखरी क्षेत्र","subtitle":"लालीगुराँसको उपत्यका","desc":"वसन्तमा लालीगुराँसले ढाकिएको मनमोहक पोखरी। धार्मिक महत्वको ठाउँ।","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Salpa_Pokhari.jpg/800px-Salpa_Pokhari.jpg","thumbs":["https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Salpa_Pokhari.jpg/400px-Salpa_Pokhari.jpg","https://images.unsplash.com/photo-1573957033786-3483b1a5e6d9?w=400"],"video":"https://www.youtube.com/embed/dQw4w9WgXcQ","season":"वसन्त","difficulty":"मध्यम"},"geometry":{"type":"Point","coordinates":[86.870,27.620]}}
+      "type":"Feature",
+      "properties":{
+        "id":"salpa",
+        "title":"Salpa",
+        "subtitle":"Alpine lake & rhododendron",
+        "desc":"Your Salpa cinematic archive place.",
+        "image":"images/salpa-1.jpg",
+        "video":"videos/salpa.mp4"
+      },
+      "geometry":{"type":"Point","coordinates":[86.870,27.620]}
     },
+
     {
-      "type":"Feature","properties":{"id":"miyung","title":"मैयुङ डाँडा","subtitle":"सगरमाथा र कञ्चनजंघा दृश्य","desc":"एकै ठाउँबाट ५ वटा ८,०००+ मिटर हिमाल देखिन्छ। ट्रेकिङको लागि उत्तम।","image":"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800","thumbs":["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400","https://pixabay.com/get/gd8e9f0a0b1c2d3e.jpg"],"video":"","season":"हिउँद/वसन्त","difficulty":"कठिन"},"geometry":{"type":"Point","coordinates":[86.92,27.58]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"pathibhara","title":"पाथीभरा देवी मन्दिर","subtitle":"कञ्चनजंघा दर्शन","desc":"शक्ति पीठ, तीर्थयात्रीहरूको आकर्षण। हिउँ चाँडो लाग्ने ठाउँ।","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Pathibhara_Temple_Nepal.jpg/800px-Pathibhara_Temple_Nepal.jpg","thumbs":["https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Pathibhara_Temple_Nepal.jpg/400px-Pathibhara_Temple_Nepal.jpg","https://www.dreamstime.com/photos-images/pathibhara.html"],"video":"https://www.youtube.com/embed/VIDEO_ID_HERE","season":"सावन","difficulty":"मध्यम"},"geometry":{"type":"Point","coordinates":[87.85,27.52]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"halesi","title":"हलेसी महादेव गुफा","subtitle":"पशुपतिनाथको पूर्वी रूप","desc":"गुफामा शिवलिङ्ग, हिन्दू-बौद्ध दुवैको तीर्थस्थल।","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Halesi_Mahadev_Cave.jpg/800px-Halesi_Mahadev_Cave.jpg","thumbs":["https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Halesi_Mahadev_Cave.jpg/400px-Halesi_Mahadev_Cave.jpg","https://pixabay.com/photos/halesi-nepal-cave-temple-123456/"],"video":"","season":"श्रावण","difficulty":"सजिलो"},"geometry":{"type":"Point","coordinates":[86.70,27.15]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"tinjure","title":"तिनजुरे मिल्के जलजला","subtitle":"राइनोफरेस्ट ट्रेल","desc":"लालीगुराँसको जंगल, वन्यजन्तुहरूको घर।","image":"https://images.unsplash.com/photo-1511895406949-1f63b2bd381e?w=800","thumbs":["https://images.unsplash.com/photo-1511895406949-1f63b2bd381e?w=400","https://pixabay.com/photos/forest-nepal-tinjuire-789012/"],"video":"","season":"वसन्त","difficulty":"मध्यम"},"geometry":{"type":"Point","coordinates":[87.45,27.10]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"gufa","title":"गुफा पोखरी","subtitle":"प्राचीन गुफा र पोखरी","desc":"प्रकृतिको अनौठो सन्दर्भ, ट्रेकिङ र पिकनिकको लागि।","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Gufa_Pokhari_Nepal.jpg/800px-Gufa_Pokhari_Nepal.jpg","thumbs":["https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Gufa_Pokhari_Nepal.jpg/400px-Gufa_Pokhari_Nepal.jpg"],"video":"","season":"ग्रीष्म","difficulty":"सजिलो"},"geometry":{"type":"Point","coordinates":[86.95,27.45]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"milke","title":"मिल्के डाँडा","subtitle":"हाइकिङ ट्रेल","desc":"क्लाउड फरेस्ट, चराहरूको विविधता।","image":"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800","thumbs":["https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400"],"video":"","season":"मनसुन","difficulty":"मध्यम"},"geometry":{"type":"Point","coordinates":[87.20,27.20]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"jaljale","title":"जलजला","subtitle":"हिमाली दृश्य","desc":"उच्च उचाइको घाँसे मैदान, घोडा सवार ट्रेक।","image":"https://pixabay.com/get/jaljale-nepal-hills.jpg","thumbs":["https://pixabay.com/get/jaljale-nepal-hills.jpg"],"video":"","season":"शरद","difficulty":"कठिन"},"geometry":{"type":"Point","coordinates":[87.30,27.25]}}
-    },
-    {
-      "type":"Feature","properties":{"id":"chinge","title":"चिन्जे लुङ्गुर","subtitle":"वन्यजन्तु अभयारण्य","desc":"रेड पान्डा र लुङ्गुरहरूको घर।","image":"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800","thumbs":["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"],"video":"","season":"वसन्त","difficulty":"मध्यम"},"geometry":{"type":"Point","coordinates":[87.10,27.40]}}
-    {
-      "type":"Feature","properties":{"id":"dhankuta","title":"धनकुटा बजार ट्रेल","subtitle":"चिया बगान","desc":"सहरको ट्रेक, स्थानीय संस्कृति अनुभव।","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Dhankuta_Nepal.jpg/800px-Dhankuta_Nepal.jpg","thumbs":["https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Dhankuta_Nepal.jpg/400px-Dhankuta_Nepal.jpg"],"video":"","season":"सावन","difficulty":"सजिलो"},"geometry":{"type":"Point","coordinates":[87.00,26.98]}}
+      "type":"Feature",
+      "properties":{
+        "id":"seudhap",
+        "title":"Seudhap",
+        "subtitle":"Deep forest & waterfalls",
+        "desc":"Shot your moss + water cinematic.",
+        "image":"images/seudhap-1.jpg",
+        "video":"videos/seudhap.mp4"
+      },
+      "geometry":{"type":"Point","coordinates":[86.95,27.72]}
+    }
   ]
 };
 
-async function init(){
-  const map = L.map('map', {zoomControl:true}).setView([27.3,87.0], 9);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
-  const icon = L.divIcon({html:'<div style="width:18px;height:18px;border-radius:50%;background:#D8A24E;border:2px solid #fff"></div>', className:''});
+/* ===== INIT MAP ===== */
+const map = L.map('map').setView([27.62,86.85], 10);
 
-  const markers = {};
-  const listEl = document.getElementById('locationsList');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-  geoData.features.forEach(f=>{
-    const p = f.properties;
-    const coords = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
+const markers = {};
+const locationsList = document.getElementById('locationsList');
 
-    let thumbsHtml = '';
-    if(Array.isArray(p.thumbs)){
-      thumbsHtml = `<div class="popup-thumbs-row">` + p.thumbs.slice(0,2).map(t=>`<img src="${t}" class="popup-thumb-small" onload="this.onerror=function(){this.src='https://via.placeholder.com/200?text=Image'}" />`).join('') + `</div>`;
+/* ===== ADD MARKERS ===== */
+places.features.forEach(f=>{
+  const p=f.properties;
+  const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]];
+
+  const popup = `
+    <div style="width:260px">
+      <img src="${p.image}" style="width:100%;border-radius:8px;margin-bottom:8px">
+      <div style="font-weight:700;font-size:16px">${p.title}</div>
+      <div style="font-size:13px;opacity:0.8">${p.subtitle}</div>
+      <p style="font-size:13px;opacity:0.85">${p.desc}</p>
+    </div>
+  `;
+
+  const marker = L.marker(coords).addTo(map).bindPopup(popup);
+  markers[p.id]=marker;
+
+  const item=document.createElement('div');
+  item.className="loc-item";
+  item.innerHTML=`<strong>${p.title}</strong><div class="meta">${p.subtitle}</div>`;
+  item.onclick=()=>{map.setView(coords,13);marker.openPopup();};
+  locationsList.appendChild(item);
+});
+
+/* ===== FILTER ===== */
+document.getElementById('q').oninput = function(){
+  const q=this.value.toLowerCase();
+  locationsList.innerHTML="";
+  places.features.forEach(f=>{
+    const p=f.properties;
+    if(p.title.toLowerCase().includes(q)){
+      const item=document.createElement('div');
+      item.className="loc-item";
+      item.innerHTML=`<strong>${p.title}</strong><div class="meta">${p.subtitle}</div>`;
+      item.onclick=()=>{map.setView([f.geometry.coordinates[1],f.geometry.coordinates[0]],13);markers[p.id].openPopup();}
+      locationsList.appendChild(item);
     }
-    const popup = `
-      <div style="width:320px">
-        <div style="font-weight:700;margin-bottom:6px">${p.title}</div>
-        <img src="${p.image}" class="popup-thumb" onload="this.onerror=function(){this.src='https://via.placeholder.com/300x140?text=${p.title}'}" />
-        <div style="font-size:13px;color:#ddd">${p.desc}</div>
-        ${thumbsHtml}
-        <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,0.8)">मौसम: ${p.season || '-'} • कठिनाई: ${p.difficulty || '-'}</div>
-        <div style="margin-top:8px">
-          ${ p.video ? `<a class="btn" href="#" data-video="${p.video}" onclick="openMedia(event)">भिडियो हेर्नुहोस्</a>` : '' }
-          ${ p.thumbs && p.thumbs.length ? `<a class="btn" href="#" style="margin-left:8px" data-gallery='${JSON.stringify(p.thumbs)}' onclick="openGallery(event)">ग्यालरी</a>` : '' }
-        </div>
-      </div>
-    `;
-
-    const m = L.marker(coords,{icon}).addTo(map).bindPopup(popup, {maxWidth:360});
-    markers[p.id] = m;
-
-    const item = document.createElement('div');
-    item.className = 'loc-item';
-    item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle}</div>`;
-    item.onclick = ()=>{ map.setView(coords,13); m.openPopup(); };
-    listEl.appendChild(item);
   });
-
-  const group = L.featureGroup(Object.values(markers));
-  if(Object.values(markers).length) map.fitBounds(group.getBounds().pad(0.2));
-
-  document.getElementById('q').addEventListener('input', (e)=>{
-    const q = e.target.value.toLowerCase();
-    listEl.innerHTML = '';
-    geoData.features.forEach(f=>{
-      const p = f.properties;
-      if(!q || p.title.toLowerCase().includes(q) || (p.subtitle && p.subtitle.toLowerCase().includes(q))){
-        const item = document.createElement('div');
-        item.className='loc-item';
-        item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle || ''}</div>`;
-        item.onclick = ()=>{ const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]]; map.setView(coords,13); markers[p.id].openPopup(); };
-        listEl.appendChild(item);
-      }
-    });
-  });
-}
-init();
-
-window.openGallery = function(ev){
-  ev.preventDefault();
-  const btn = ev.currentTarget;
-  const imgs = JSON.parse(btn.getAttribute('data-gallery') || '[]');
-  if(!imgs.length) return;
-  const modal = document.createElement('div'); modal.className='modal';
-  const inner = document.createElement('div'); inner.className='modal-inner';
-  let idx = 0;
-  inner.innerHTML = `<img id="galleryImg" class="gallery-img" src="${imgs[idx]}" onload="this.onerror=function(){this.src='https://via.placeholder.com/800x540?text=Image'}" /><div style="display:flex;justify-content:space-between;margin-top:8px"><button id="prevBtn" style="padding:8px 10px;border-radius:6px">अघिल्लो</button><button id="nextBtn" style="padding:8px 10px;border-radius:6px">अर्को</button></div><div style="text-align:right;margin-top:8px"><button id="closeBtn" class="modal-close">बन्द गर्नुहोस्</button></div>`;
-  modal.appendChild(inner); document.body.appendChild(modal);
-  document.getElementById('prevBtn').onclick = ()=>{ idx = (idx-1+imgs.length)%imgs.length; document.getElementById('galleryImg').src = imgs[idx]; };
-  document.getElementById('nextBtn').onclick = ()=>{ idx = (idx+1)%imgs.length; document.getElementById('galleryImg').src = imgs[idx]; };
-  document.getElementById('closeBtn').onclick = ()=>{ modal.remove(); };
-};
-
-window.openMedia = function(ev){
-  ev.preventDefault();
-  const a = ev.currentTarget;
-  const video = a.dataset.video;
-  if(!video) return;
-  const modal = document.createElement('div'); modal.className='modal';
-  const inner = document.createElement('div'); inner.className='modal-inner';
-  if(video.includes('youtube') || video.includes('youtu.be')){
-    let embed = video;
-    if(video.includes('watch?v=')) embed = video.replace('watch?v=','embed/');
-    inner.innerHTML = `<iframe width="100%" height="540" src="${embed}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div style="text-align:right;margin-top:8px"><button id="closeBtn" class="modal-close">बन्द गर्नुहोस्</button></div>`;
-  } else {
-    inner.innerHTML = `<video width="100%" height="480" controls autoplay><source src="${video}" type="video/mp4">तपाईंको ब्राउजरले भिडियो सपोर्ट गर्दैन।</video><div style="text-align:right;margin-top:8px"><button id="closeBtn" class="modal-close">बन्द गर्नुहोस्</button></div>`;
-  }
-  modal.appendChild(inner); document.body.appendChild(modal);
-  document.getElementById('closeBtn').onclick = ()=>{ modal.remove(); };
 };
 </script>
 </body>
 </html>
+  
