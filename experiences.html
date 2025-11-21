@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiences | Naresh Bikram Rai</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        header {
+            background: #000;
+            padding: 15px 25px;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        nav a:hover {
+            opacity: 0.7;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .card:hover { transform: scale(1.02); }
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card-content h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="map.html">Map</a></li>
+                <li><a href="trails.html">Trails</a></li>
+                <li><a href="experiences.html">Experiences</a></li>
+                <li><a href="microdocs.html">Micro Docs</a></li>
+                <li><a href="photography.html">Photography</a></li>
+                <li><a href="sounds.html">Sounds</a></li>
+                <li><a href="stories.html">Local Stories</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Experiences</h1>
+        <div class="grid">
+            <div class="card">
+                <img src="images/experience1.jpg" alt="Experience 1" />
+                <div class="card-content">
+                    <h3>High-Altitude Lakes</h3>
+                    <p>Cinematic journeys across sacred lakes of Eastern Nepal.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/experience2.jpg" alt="Experience 2" />
+                <div class="card-content">
+                    <h3>Rhododendron Trails</h3>
+                    <p>Walk through colorful forests and rare species.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="images/experience3.jpg" alt="Experience 3" />
+                <div class="card-content">
+                    <h3>Rural Village Life</h3>
+                    <p>Witness authentic living, food, and culture.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
