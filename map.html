@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Naresh Trail Atlas — Interactive Map</title>
 
-<!-- Correct CSS Path -->
-<link rel="stylesheet" href="assets/main.css">
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
 <style>
 /* ------------------------------
    GLOBAL AESTHETIC 
@@ -167,7 +168,7 @@ body{
      PAGE WRAPPER
 --------------------------- -->
 <div class="page">
-    <!-- LEFT SIDEBAR -->
+     <!-- LEFT SIDEBAR -->
   <div class="sidebar">
     <div>
       <div class="brand">NARESH BIKRAM RAI</div>
@@ -184,7 +185,7 @@ body{
   <!-- INTERACTIVE MAP -->
   <div id="map"></div>
 </div> <!-- END OF PAGE WRAPPER -->
-  <!-- FUTURISTIC SECTIONS -->
+   <!-- FUTURISTIC SECTIONS -->
 
 <!-- (B) Travel Memory Timeline -->
 <section class="section">
@@ -217,7 +218,7 @@ body{
   <div class="card">Best Sky for Maiyung Sunrise: November–January</div>
   <div class="card">Risk Map: Leeches heavy in Seudhap during monsoon</div>
 </section>
-  <!-- Leaflet JS -->
+   <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
@@ -303,4 +304,3 @@ document.getElementById('q').oninput = function(){
 </script>
 </body>
 </html>
-  
