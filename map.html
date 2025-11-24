@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ne">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,220 +9,119 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
-/* ------------------------------
-   GLOBAL AESTHETIC 
--------------------------------*/
-:root{
-  --bg:#000;
-  --fg:#fff;
-  --muted:rgba(255,255,255,0.75);
-  --accent:#D8A24E;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Poppins, sans-serif;
-  background:var(--bg);
-  color:var(--fg);
-  overflow-x:hidden;
-  display:flex;
-  flex-direction:column;
-}
-
-/* ------------------------------
-   TOP NAVIGATION BAR
--------------------------------*/
-.topnav{
-  width:100%;
-  padding:16px 28px;
-  background:rgba(0,0,0,0.65);
-  backdrop-filter:blur(4px);
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  display:flex;
-  gap:22px;
-  flex-wrap:wrap;
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:9999;
-}
-.topnav a{
-  color:var(--fg);
-  text-decoration:none;
-  font-size:14px;
-  opacity:0.85;
-}
-.topnav a:hover{opacity:1}
-
-/* ------------------------------
-   PAGE LAYOUT
--------------------------------*/
-.page{
-  display:flex;
-  margin-top:70px;
-  height:calc(100vh - 70px);
-}
-
-/* ------------------------------
-   LEFT SIDEBAR (Locations + Search)
--------------------------------*/
-.sidebar{
-  width:310px;
-  padding:28px;
-  border-right:1px solid rgba(255,255,255,0.06);
-  background:rgba(255,255,255,0.02);
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-.brand{font-weight:700;letter-spacing:2px;font-size:20px}
-.subtitle{font-size:13px;color:var(--muted)}
-
-.search input{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  background:rgba(255,255,255,0.04);
-  color:var(--fg);
-}
-
-.locations{
-  flex:1;
-  overflow:auto;
-}
-.loc-item{
-  padding:12px;
-  border-radius:8px;
-  background:transparent;
-  cursor:pointer;
-  margin-bottom:8px;
-  border:1px solid rgba(255,255,255,0.04);
-}
-.loc-item:hover{
-  background:rgba(255,255,255,0.05);
-}
-
-/* ------------------------------
-   MAP
--------------------------------*/
-#map{
-  flex:1;
-  height:100%;
-  width:100%;
-}
-
-/* ------------------------------
-   FUTURISTIC SECTIONS (Timeline, Culture, Micro Docs)
--------------------------------*/
-.section{
-  padding:60px 40px;
-  border-top:1px solid rgba(255,255,255,0.1);
-}
-.section h2{
-  font-size:26px;
-  margin-bottom:20px;
-  letter-spacing:1.5px;
-}
-.card{
-  background:rgba(255,255,255,0.04);
-  padding:20px;
-  border-radius:8px;
-  margin-bottom:14px;
-}
-
-/* MOBILE */
-@media(max-width:900px){
-  .page{flex-direction:column}
+  :root{
+    --bg:#000;
+    --fg:#fff;
+    --muted:rgba(255,255,255,0.75);
+    --accent:#D8A24E;
+    --sidebar-w:320px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family: Poppins, sans-serif;background:var(--bg);color:var(--fg);height:100vh;display:flex;overflow:hidden}
+  /* Left sidebar */
   .sidebar{
-    width:100%;
-    height:260px;
-    overflow:hidden;
+    width: var(--sidebar-w);
+    min-width:240px;
+    max-width:380px;
+    padding:28px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-right:1px solid rgba(255,255,255,0.04);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    z-index: 9999;
   }
-  #map{
-    height:60vh;
+  .brand{font-weight:700;letter-spacing:2px;font-size:20px}
+  .subtitle{font-size:13px;color:var(--muted)}
+  .menu{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:6px;
   }
-}
+  .menu a{
+    color:var(--muted);
+    text-decoration:none;
+    padding:8px 6px;
+    border-radius:6px;
+    display:inline-block;
+    transition: all .18s;
+  }
+  .menu a:hover{color:var(--fg); background: rgba(255,255,255,0.02)}
+  .search{margin-top:6px}
+  .search input{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:var(--fg)}
+  .locations{overflow:auto;padding-top:8px;flex:1}
+  .loc-item{padding:12px;border-radius:8px;margin-bottom:8px;background:transparent;cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
+  .loc-item:hover{background:rgba(255,255,255,0.02)}
+  .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .footer{font-size:12px;color:var(--muted);padding-top:10px;border-top:1px solid rgba(255,255,255,0.03)}
+  /* Map container */
+  #map {flex:1;height:100vh}
+  /* Popup content custom */
+  .popup-title{font-weight:700;margin-bottom:6px}
+  .popup-thumb{width:100%;height:140px;object-fit:cover;border-radius:6px;margin-bottom:8px}
+  .popup-row{display:flex;gap:8px}
+  .popup-thumb-small{width:48%;height:80px;object-fit:cover;border-radius:6px}
+  .btn{display:inline-block;padding:8px 10px;border-radius:6px;background:var(--accent);color:#000;font-weight:600;text-decoration:none;margin-top:6px}
+  /* modal */
+  .naresh-modal{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:12000;padding:16px;
+  }
+  .naresh-modal .inner{width:100%;max-width:980px;background:#000;padding:12px;border-radius:8px}
+  .naresh-modal .close{float:right;background:#fff;border:none;padding:8px 10px;border-radius:6px;cursor:pointer}
+  /* responsive */
+  @media (max-width:900px){
+    .sidebar{width:100%;height:260px;position:fixed;z-index:999;left:0;top:0;display:flex;flex-direction:row;gap:12px;overflow:hidden;padding:14px}
+    #map{margin-top:260px}
+    .locations{display:none}
+    .menu{display:flex;flex-direction:row;flex-wrap:wrap;gap:6px}
+    .menu a{font-size:13px;padding:6px 8px}
+  }
 </style>
 </head>
 <body>
 
-<!-- --------------------------
-     TOP NAVIGATION BAR
---------------------------- -->
-<div class="topnav">
-  <a href="index.html">Home</a>
-  <a href="map.html">Map</a>
-  <a href="trails.html">Trails</a>
-  <a href="experiences.html">Experiences</a>
-  <a href="microdocs.html">Micro Docs</a>
-  <a href="photography.html">Photography</a>
-  <a href="sounds.html">Sounds</a>
-  <a href="stories.html">Local Stories</a>
-  <a href="blog.html">Blog</a>
-  <a href="about.html">About</a>
-  <a href="contact.html">Contact</a>
-</div>
-
-<!-- --------------------------
-     PAGE WRAPPER
---------------------------- -->
-<div class="page">
-     <!-- LEFT SIDEBAR -->
-  <div class="sidebar">
+  <div class="sidebar" role="navigation" aria-label="Main menu">
     <div>
       <div class="brand">NARESH BIKRAM RAI</div>
-      <div class="subtitle">Trail Atlas — Eastern Nepal</div>
+      <div class="subtitle">Trail Atlas — Eastern Nepal • Cinematic Archive</div>
     </div>
+
+    <nav class="menu" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="map.html" style="font-weight:600;color:var(--fg)">Map</a>
+      <a href="trails.html">Trails</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="microdocs.html">Micro Docs</a>
+      <a href="photography.html">Photography</a>
+      <a href="sounds.html">Sounds</a>
+      <a href="stories.html">Local Stories</a>
+      <a href="blog.html">Blog</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
 
     <div class="search">
-      <input id="q" placeholder="Search (example: Salpa, Maiyung, Seudhap)">
+      <input id="q" placeholder="Filter places (eg: Salpa, Maiyung)" aria-label="Filter places" />
     </div>
 
-    <div class="locations" id="locationsList"></div>
+    <div class="locations" id="locationsList" aria-live="polite">
+      <!-- location items injected here -->
+    </div>
+
+    <div class="footer">
+      <div>Tip: Click a marker or a list item.</div>
+      <div style="margin-top:8px">Replace sample images/videos with your own files.</div>
+    </div>
   </div>
 
-  <!-- INTERACTIVE MAP -->
-  <div id="map"></div>
-</div> <!-- END OF PAGE WRAPPER -->
-   <!-- FUTURISTIC SECTIONS -->
+  <div id="map" role="application" aria-label="Map of Eastern Nepal"></div>
 
-<!-- (B) Travel Memory Timeline -->
-<section class="section">
-  <h2>Travel Memory Timeline</h2>
-  <div class="card">APRIL 2024 – Salpa: Rhododendron bloom + alpine silence</div>
-  <div class="card">JUNE 2024 – Seudhap: Waterfalls + deep forest cinematic</div>
-  <div class="card">AUG 2024 – Hongdin: Village life, river wind, local stories</div>
-</section>
-
-<!-- (C) Micro Documentary Archive -->
-<section class="section">
-  <h2>Micro Documentary Episodes</h2>
-  <div class="card">Episode 01 — Salpa Rhododendron (5 min)</div>
-  <div class="card">Episode 02 — Mundhum Trail Sacred Points (7 min)</div>
-  <div class="card">Episode 03 — Seudhap Forest Mood (4 min)</div>
-</section>
-
-<!-- (D) Local Culture Archive -->
-<section class="section">
-  <h2>Local Culture & Living Heritage</h2>
-  <div class="card">• Origin of “Salpa” name</div>
-  <div class="card">• Mundhum story — Maiyung ridge</div>
-  <div class="card">• Lost farming methods of Hongdin</div>
-</section>
-
-<!-- (F) Travel Intelligence Section -->
-<section class="section">
-  <h2>Travel Intelligence</h2>
-  <div class="card">Best Week to Visit Salpa: April 10–20</div>
-  <div class="card">Best Sky for Maiyung Sunrise: November–January</div>
-  <div class="card">Risk Map: Leeches heavy in Seudhap during monsoon</div>
-</section>
-   <!-- Leaflet JS -->
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-/* ===== PLACES DATA ===== */
+/* === Sample GeoJSON points (edit as you wish) === */
 const places = {
   "type":"FeatureCollection",
   "features":[
@@ -230,77 +129,141 @@ const places = {
       "type":"Feature",
       "properties":{
         "id":"salpa",
-        "title":"Salpa",
-        "subtitle":"Alpine lake & rhododendron",
-        "desc":"Your Salpa cinematic archive place.",
-        "image":"FullSizeRender_11zon.jpg"
-        "video":"1763771939708.mp4"
+        "title":"Salpa Pokhari",
+        "subtitle":"Rhododendron valley & alpine meadows",
+        "desc":"Cinematic rhododendron slopes and high pasture. Best in spring.",
+        /* Example using your uploaded file path — tool will convert to URL. */
+        "image":"/mnt/data/FCFE3E39-B9DC-4E54-A90E-4902C34B0BFE.jpeg",
+        "thumbs":["/mnt/data/FCFE3E39-B9DC-4E54-A90E-4902C34B0BFE.jpeg"],
+        "video":"videos/salpa-short.mp4",
+        "season":"Spring",
+        "difficulty":"Moderate"
       },
       "geometry":{"type":"Point","coordinates":[86.870,27.620]}
     },
-
     {
       "type":"Feature",
       "properties":{
-        "id":"seudhap",
-        "title":"Seudhap",
-        "subtitle":"Deep forest & waterfalls",
-        "desc":"Shot your moss + water cinematic.",
-        "image":"images/seudhap-1.jpg",
-        "video":"videos/seudhap.mp4"
+        "id":"maiyung",
+        "title":"Maiyung Danda",
+        "subtitle":"Sunrise ridge & Mundhum stories",
+        "desc":"A ridge with panoramic sunrise views and Mundhum cultural sites.",
+        "image":"images/maiyung-1.jpg",
+        "thumbs":["images/maiyung-1.jpg","images/maiyung-2.jpg"],
+        "video":"videos/maiyung-short.mp4",
+        "season":"Autumn / Spring",
+        "difficulty":"Moderate-Hard"
       },
-      "geometry":{"type":"Point","coordinates":[86.95,27.72]}
+      "geometry":{"type":"Point","coordinates":[86.80,27.55]}
+    },
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"hongdin",
+        "title":"Hongdin (Khongding)",
+        "subtitle":"Riverside settlements & terraced hills",
+        "desc":"Quiet village by the river with unique terraced farms.",
+        "image":"images/hongdin-1.jpg",
+        "thumbs":["images/hongdin-1.jpg"],
+        "video":"videos/hongdin-short.mp4",
+        "season":"All year",
+        "difficulty":"Easy"
+      },
+      "geometry":{"type":"Point","coordinates":[86.78,27.63]}
     }
   ]
 };
 
-/* ===== INIT MAP ===== */
-const map = L.map('map').setView([27.62,86.85], 10);
+/* === Initialize map === */
+const map = L.map('map', {zoomControl:true, scrollWheelZoom:true}).setView([27.62,86.85], 10);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+/* Tiles (OSM) */
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
 
-const markers = {};
+/* Create simple icon */
+function createIcon(){
+  return L.divIcon({
+    html: '<div style="width:18px;height:18px;border-radius:50%;background:'+getComputedStyle(document.documentElement).getPropertyValue('--accent')+';border:2px solid #fff;box-shadow:0 0 6px rgba(0,0,0,0.6)"></div>',
+    className: ''
+  });
+}
+
 const locationsList = document.getElementById('locationsList');
+const markers = {};
 
-/* ===== ADD MARKERS ===== */
+/* Add features to map and to sidebar list */
 places.features.forEach(f=>{
-  const p=f.properties;
-  const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]];
+  const p = f.properties;
+  const coords = [f.geometry.coordinates[1], f.geometry.coordinates[0]];
 
-  const popup = `
-    <div style="width:260px">
-      <img src="${p.image}" style="width:100%;border-radius:8px;margin-bottom:8px">
-      <div style="font-weight:700;font-size:16px">${p.title}</div>
-      <div style="font-size:13px;opacity:0.8">${p.subtitle}</div>
-      <p style="font-size:13px;opacity:0.85">${p.desc}</p>
+  const popupHtml = `
+    <div style="width:320px">
+      <div class="popup-title">${p.title}</div>
+      <img src="${p.image}" class="popup-thumb" alt="${p.title}" />
+      <div style="font-size:13px;color:#ddd;margin-top:6px">${p.desc}</div>
+      <div style="margin-top:8px" class="meta">Season: ${p.season} • Difficulty: ${p.difficulty}</div>
+      ${ p.video ? `<a class="btn" href="#" data-video="${p.video}" onclick="openMedia(event)">Watch</a>` : '' }
     </div>
   `;
 
-  const marker = L.marker(coords).addTo(map).bindPopup(popup);
-  markers[p.id]=marker;
+  const marker = L.marker(coords,{icon:createIcon()}).addTo(map).bindPopup(popupHtml, {maxWidth:360});
+  markers[p.id] = marker;
 
-  const item=document.createElement('div');
-  item.className="loc-item";
-  item.innerHTML=`<strong>${p.title}</strong><div class="meta">${p.subtitle}</div>`;
-  item.onclick=()=>{map.setView(coords,13);marker.openPopup();};
+  // Sidebar item
+  const item = document.createElement('div');
+  item.className = 'loc-item';
+  item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle}</div>`;
+  item.onclick = ()=>{ map.setView(coords,13, {animate:true}); marker.openPopup(); };
   locationsList.appendChild(item);
 });
 
-/* ===== FILTER ===== */
-document.getElementById('q').oninput = function(){
-  const q=this.value.toLowerCase();
-  locationsList.innerHTML="";
+/* Simple filter */
+document.getElementById('q').addEventListener('input', e=>{
+  const q = e.target.value.toLowerCase();
+  locationsList.innerHTML = '';
   places.features.forEach(f=>{
     const p=f.properties;
-    if(p.title.toLowerCase().includes(q)){
-      const item=document.createElement('div');
-      item.className="loc-item";
-      item.innerHTML=`<strong>${p.title}</strong><div class="meta">${p.subtitle}</div>`;
-      item.onclick=()=>{map.setView([f.geometry.coordinates[1],f.geometry.coordinates[0]],13);markers[p.id].openPopup();}
+    if(!q || p.title.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q)){
+      const item = document.createElement('div');
+      item.className='loc-item';
+      item.innerHTML = `<div style="font-weight:700">${p.title}</div><div class="meta">${p.subtitle}</div>`;
+      item.onclick = ()=>{ const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]]; map.setView(coords,13); markers[p.id].openPopup(); };
       locationsList.appendChild(item);
     }
   });
+});
+
+/* Open media modal */
+window.openMedia = function(ev){
+  ev.preventDefault();
+  const a = ev.currentTarget;
+  const video = a.dataset.video;
+  if(!video) return;
+  // Create modal
+  const modal = document.createElement('div');
+  modal.className = 'naresh-modal';
+  const inner = document.createElement('div');
+  inner.className = 'inner';
+  // If it's a YouTube embed URL, show iframe
+  if(video.startsWith('http') && video.includes('youtube')){
+    inner.innerHTML = `<iframe width="100%" height="540" src="${video}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div style="text-align:right;margin-top:8px"><button id="nr-close" class="close">Close</button></div>`;
+  } else {
+    // local mp4
+    inner.innerHTML = `<video width="100%" height="480" controls autoplay><source src="${video}" type="video/mp4">Your browser does not support the video tag.</video>
+      <div style="text-align:right;margin-top:8px"><button id="nr-close" class="close">Close</button></div>`;
+  }
+  modal.appendChild(inner);
+  document.body.appendChild(modal);
+  document.getElementById('nr-close').onclick = ()=> modal.remove();
 };
+
+/* Fit bounds to markers */
+const group = L.featureGroup(Object.values(markers));
+if(group.getLayers().length) map.fitBounds(group.getBounds().pad(0.25));
 </script>
 </body>
 </html>
