@@ -1,657 +1,306 @@
 <!doctype html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trail Atlas Interactive Map</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <style>
-    body {
-      box-sizing: border-box;
-    }
-    
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Naresh Trail Atlas — Interactive Map</title>
 
-    html, body {
-      height: 100%;
-      width: 100%;
-    }
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow: hidden;
-      display: flex;
-    }
+<style>
+/* ------------------------------
+   GLOBAL AESTHETIC 
+-------------------------------*/
+:root{
+  --bg:#000;
+  --fg:#fff;
+  --muted:rgba(255,255,255,0.75);
+  --accent:#D8A24E;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Poppins, sans-serif;
+  background:var(--bg);
+  color:var(--fg);
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+}
 
-    .app-wrapper {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      background: #0a0a0a;
-      color: #ffffff;
-    }
+/* ------------------------------
+   TOP NAVIGATION BAR
+-------------------------------*/
+.topnav{
+  width:100%;
+  padding:16px 28px;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(4px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;
+  gap:22px;
+  flex-wrap:wrap;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:9999;
+}
+.topnav a{
+  color:var(--fg);
+  text-decoration:none;
+  font-size:14px;
+  opacity:0.85;
+}
+.topnav a:hover{opacity:1}
 
-    .sidebar {
-      width: 340px;
-      min-width: 280px;
-      background: linear-gradient(180deg, rgba(20, 20, 20, 0.98), rgba(10, 10, 10, 0.98));
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
-      display: flex;
-      flex-direction: column;
-      z-index: 1000;
-      overflow: hidden;
-    }
+/* ------------------------------
+   PAGE LAYOUT
+-------------------------------*/
+.page{
+  display:flex;
+  margin-top:70px;
+  height:calc(100vh - 70px);
+}
 
-    .sidebar-header {
-      padding: 28px 24px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
+/* ------------------------------
+   LEFT SIDEBAR (Locations + Search)
+-------------------------------*/
+.sidebar{
+  width:310px;
+  padding:28px;
+  border-right:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.02);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.brand{font-weight:700;letter-spacing:2px;font-size:20px}
+.subtitle{font-size:13px;color:var(--muted)}
 
-    .brand-name {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 2.5px;
-      margin-bottom: 8px;
-      line-height: 1.2;
-    }
+.search input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.04);
+  color:var(--fg);
+}
 
-    .subtitle {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.65);
-      line-height: 1.5;
-    }
+.locations{
+  flex:1;
+  overflow:auto;
+}
+.loc-item{
+  padding:12px;
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,0.04);
+}
+.loc-item:hover{
+  background:rgba(255,255,255,0.05);
+}
 
-    .nav-menu {
-      padding: 16px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+/* ------------------------------
+   MAP
+-------------------------------*/
+#map{
+  flex:1;
+  height:100%;
+  width:100%;
+}
 
-    .nav-link {
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      text-decoration: none;
-      transition: all 0.2s ease;
-      background: rgba(255, 255, 255, 0.02);
-    }
+/* ------------------------------
+   FUTURISTIC SECTIONS (Timeline, Culture, Micro Docs)
+-------------------------------*/
+.section{
+  padding:60px 40px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+.section h2{
+  font-size:26px;
+  margin-bottom:20px;
+  letter-spacing:1.5px;
+}
+.card{
+  background:rgba(255,255,255,0.04);
+  padding:20px;
+  border-radius:8px;
+  margin-bottom:14px;
+}
 
-    .nav-link:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.06);
-    }
+/* MOBILE */
+@media(max-width:900px){
+  .page{flex-direction:column}
+  .sidebar{
+    width:100%;
+    height:260px;
+    overflow:hidden;
+  }
+  #map{
+    height:60vh;
+  }
+}
+</style>
+</head>
+<body>
 
-    .nav-link.active {
-      color: #D8A24E;
-      background: rgba(216, 162, 78, 0.12);
-      font-weight: 600;
-    }
+<!-- --------------------------
+     TOP NAVIGATION BAR
+--------------------------- -->
+<div class="topnav">
+  <a href="index.html">Home</a>
+  <a href="map.html">Map</a>
+  <a href="trails.html">Trails</a>
+  <a href="experiences.html">Experiences</a>
+  <a href="microdocs.html">Micro Docs</a>
+  <a href="photography.html">Photography</a>
+  <a href="sounds.html">Sounds</a>
+  <a href="stories.html">Local Stories</a>
+  <a href="blog.html">Blog</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+</div>
 
-    .search-section {
-      padding: 16px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
-      color: #ffffff;
-      font-size: 14px;
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .search-input:focus {
-      border-color: rgba(216, 162, 78, 0.4);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    .locations-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px 24px;
-    }
-
-    .location-item {
-      padding: 16px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .location-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(216, 162, 78, 0.3);
-      transform: translateY(-2px);
-    }
-
-    .location-name {
-      font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 6px;
-      color: #ffffff;
-    }
-
-    .location-type {
-      font-size: 12px;
-      color: #D8A24E;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .location-meta {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.55);
-    }
-
-    .sidebar-footer {
-      padding: 16px 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.5);
-      text-align: center;
-    }
-
-    #map {
-      flex: 1;
-      position: relative;
-      height: 100%;
-    }
-
-    .leaflet-popup-content-wrapper {
-      background: #1a1a1a;
-      color: #ffffff;
-      border-radius: 12px;
-      padding: 0;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    }
-
-    .leaflet-popup-content {
-      margin: 0;
-      min-width: 260px;
-    }
-
-    .popup-header {
-      padding: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .popup-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .popup-type {
-      font-size: 11px;
-      color: #D8A24E;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .popup-body {
-      padding: 16px;
-    }
-
-    .popup-description {
-      font-size: 13px;
-      line-height: 1.6;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 12px;
-    }
-
-    .popup-meta {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .popup-images {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .popup-image {
-      width: 100%;
-      height: 80px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-    .popup-button {
-      margin-top: 12px;
-      padding: 10px 16px;
-      background: #D8A24E;
-      color: #000000;
-      border-radius: 8px;
-      text-decoration: none;
-      display: inline-block;
-      font-weight: 600;
-      font-size: 13px;
-      transition: all 0.2s ease;
-    }
-
-    .popup-button:hover {
-      background: #c99240;
-      transform: translateY(-1px);
-    }
-
-    .leaflet-popup-tip {
-      background: #1a1a1a;
-    }
-
-    .leaflet-container a.leaflet-popup-close-button {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 20px;
-      padding: 8px 12px;
-    }
-
-    .leaflet-container a.leaflet-popup-close-button:hover {
-      color: #ffffff;
-    }
-
-    @media (max-width: 900px) {
-      .sidebar {
-        width: 100%;
-        height: auto;
-        max-height: 50%;
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      }
-
-      .app-wrapper {
-        flex-direction: column;
-      }
-
-      .nav-menu {
-        overflow-x: auto;
-        flex-wrap: nowrap;
-      }
-
-      .locations-list {
-        max-height: 200px;
-      }
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
- </head>
- <body>
-  <div class="app-wrapper">
-   <div class="sidebar">
-    <div class="sidebar-header">
-     <div class="brand-name" id="brandName">
-      NARESH BIKRAM RAI
-     </div>
-     <div class="subtitle" id="subtitle">
-      Trail Atlas — Eastern Nepal • Cinematic Archive
-     </div>
+<!-- --------------------------
+     PAGE WRAPPER
+--------------------------- -->
+<div class="page">
+   <!-- LEFT SIDEBAR -->
+  <div class="sidebar">
+    <div>
+      <div class="brand">NARESH BIKRAM RAI</div>
+      <div class="subtitle">Trail Atlas — Eastern Nepal</div>
     </div>
-    <nav class="nav-menu"><a href="#" class="nav-link">Home</a> <a href="#" class="nav-link active">Map</a> <a href="#" class="nav-link">Trails</a> <a href="#" class="nav-link">Experiences</a> <a href="#" class="nav-link">Micro Docs</a> <a href="#" class="nav-link">Photography</a> <a href="#" class="nav-link">Sounds</a> <a href="#" class="nav-link">Stories</a> <a href="#" class="nav-link">Blog</a> <a href="#" class="nav-link">About</a> <a href="#" class="nav-link">Contact</a>
-    </nav>
-    <div class="search-section"><input type="text" id="searchInput" class="search-input" placeholder="Filter places...">
+
+    <div class="search">
+      <input id="q" placeholder="Search (example: Salpa, Maiyung, Seudhap)">
     </div>
-    <div class="locations-list" id="locationsList"></div>
-    <div class="sidebar-footer" id="footerText">
-     © 2025 Naresh Bikram Rai
-    </div>
-   </div>
-   <div id="map"></div>
+
+    <div class="locations" id="locationsList"></div>
   </div>
-  <script>
-    const defaultConfig = {
-      brand_name: "NARESH BIKRAM RAI",
-      subtitle: "Trail Atlas — Eastern Nepal • Cinematic Archive",
-      search_placeholder: "Filter places...",
-      footer_text: "© 2025 Naresh Bikram Rai",
-      background_color: "#0a0a0a",
-      surface_color: "#1a1a1a",
-      text_color: "#ffffff",
-      primary_action_color: "#D8A24E",
-      secondary_action_color: "#8a6d3b",
-      font_family: "Segoe UI",
-      font_size: 16
-    };
 
-    // Trail locations data for Eastern Nepal
-    const trailLocations = [
-      {
-        name: "Everest Base Camp",
-        type: "Trek Destination",
-        lat: 28.0026,
-        lng: 86.8528,
-        description: "Iconic trek destination offering spectacular views of Mount Everest and surrounding peaks.",
-        elevation: "5,364m",
-        difficulty: "Challenging"
-      },
-      {
-        name: "Namche Bazaar",
-        type: "Village",
-        lat: 27.8042,
-        lng: 86.7133,
-        description: "Gateway to Everest region, vibrant Sherpa market town with stunning mountain views.",
-        elevation: "3,440m",
-        difficulty: "Moderate"
-      },
-      {
-        name: "Gokyo Lakes",
-        type: "Natural Wonder",
-        lat: 27.9600,
-        lng: 86.6900,
-        description: "Sacred turquoise lakes nestled in the Himalayas, offering pristine beauty and tranquility.",
-        elevation: "4,700-5,000m",
-        difficulty: "Challenging"
-      },
-      {
-        name: "Kanchenjunga Base Camp",
-        type: "Trek Destination",
-        lat: 27.7025,
-        lng: 88.1475,
-        description: "Remote and pristine trek to the base of the world's third-highest mountain.",
-        elevation: "5,143m",
-        difficulty: "Very Challenging"
-      },
-      {
-        name: "Makalu Base Camp",
-        type: "Trek Destination",
-        lat: 27.8894,
-        lng: 87.0889,
-        description: "Off-the-beaten-path trek offering solitude and dramatic Himalayan scenery.",
-        elevation: "4,870m",
-        difficulty: "Very Challenging"
-      },
-      {
-        name: "Tengboche Monastery",
-        type: "Cultural Site",
-        lat: 27.8361,
-        lng: 86.7644,
-        description: "Historic Buddhist monastery with panoramic views of Everest, Lhotse, and Ama Dablam.",
-        elevation: "3,867m",
-        difficulty: "Moderate"
-      },
-      {
-        name: "Phaplu",
-        type: "Village",
-        lat: 27.5167,
-        lng: 86.5833,
-        description: "Charming Sherpa village, alternative starting point for Everest region treks.",
-        elevation: "2,469m",
-        difficulty: "Easy"
-      },
-      {
-        name: "Dudh Koshi River",
-        type: "Natural Feature",
-        lat: 27.7500,
-        lng: 86.7300,
-        description: "Milky glacial river flowing through dramatic gorges in the Everest region.",
-        elevation: "2,600-3,400m",
-        difficulty: "Moderate"
-      }
-    ];
+  <!-- INTERACTIVE MAP -->
+  <div id="map"></div>
+</div> <!-- END OF PAGE WRAPPER -->
+ <!-- FUTURISTIC SECTIONS -->
 
-    let map;
-    let markers = [];
-    let allLocations = [...trailLocations];
+<!-- (B) Travel Memory Timeline -->
+<section class="section">
+  <h2>Travel Memory Timeline</h2>
+  <div class="card">APRIL 2024 – Salpa: Rhododendron bloom + alpine silence</div>
+  <div class="card">JUNE 2024 – Seudhap: Waterfalls + deep forest cinematic</div>
+  <div class="card">AUG 2024 – Hongdin: Village life, river wind, local stories</div>
+</section>
 
-    function initMap() {
-      // Initialize Leaflet map centered on Eastern Nepal
-      map = L.map('map').setView([27.7, 87.0], 8);
+<!-- (C) Micro Documentary Archive -->
+<section class="section">
+  <h2>Micro Documentary Episodes</h2>
+  <div class="card">Episode 01 — Salpa Rhododendron (5 min)</div>
+  <div class="card">Episode 02 — Mundhum Trail Sacred Points (7 min)</div>
+  <div class="card">Episode 03 — Seudhap Forest Mood (4 min)</div>
+</section>
 
-      // Add OpenStreetMap tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18
-      }).addTo(map);
+<!-- (D) Local Culture Archive -->
+<section class="section">
+  <h2>Local Culture & Living Heritage</h2>
+  <div class="card">• Origin of “Salpa” name</div>
+  <div class="card">• Mundhum story — Maiyung ridge</div>
+  <div class="card">• Lost farming methods of Hongdin</div>
+</section>
 
-      // Custom icon
-      const customIcon = L.divIcon({
-        html: '<div style="background: #D8A24E; width: 24px; height: 24px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>',
-        className: '',
-        iconSize: [24, 24],
-        iconAnchor: [12, 12]
-      });
+<!-- (F) Travel Intelligence Section -->
+<section class="section">
+  <h2>Travel Intelligence</h2>
+  <div class="card">Best Week to Visit Salpa: April 10–20</div>
+  <div class="card">Best Sky for Maiyung Sunrise: November–January</div>
+  <div class="card">Risk Map: Leeches heavy in Seudhap during monsoon</div>
+</section>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-      // Add markers for each location
-      trailLocations.forEach(location => {
-        const marker = L.marker([location.lat, location.lng], { icon: customIcon })
-          .addTo(map)
-          .bindPopup(createPopupContent(location));
-        
-        markers.push({ marker, location });
-      });
+<script>
+/* ===== PLACES DATA ===== */
+const places = {
+  "type":"FeatureCollection",
+  "features":[
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"salpa",
+        "title":"Salpa",
+        "subtitle":"Alpine lake & rhododendron",
+        "desc":"Your Salpa cinematic archive place.",
+        "image":"images/salpa-1.jpg",
+        "video":"videos/salpa.mp4"
+      },
+      "geometry":{"type":"Point","coordinates":[86.870,27.620]}
+    },
 
-      renderLocationsList();
+    {
+      "type":"Feature",
+      "properties":{
+        "id":"seudhap",
+        "title":"Seudhap",
+        "subtitle":"Deep forest & waterfalls",
+        "desc":"Shot your moss + water cinematic.",
+        "image":"images/seudhap-1.jpg",
+        "video":"videos/seudhap.mp4"
+      },
+      "geometry":{"type":"Point","coordinates":[86.95,27.72]}
     }
+  ]
+};
 
-    function createPopupContent(location) {
-      return `
-        <div class="popup-header">
-          <div class="popup-title">${location.name}</div>
-          <div class="popup-type">${location.type}</div>
-        </div>
-        <div class="popup-body">
-          <div class="popup-description">${location.description}</div>
-          <div class="popup-meta">
-            <div>📍 Elevation: ${location.elevation}</div>
-            <div>⛰️ Difficulty: ${location.difficulty}</div>
-          </div>
-        </div>
-      `;
+/* ===== INIT MAP ===== */
+const map = L.map('map').setView([27.62,86.85], 10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+const markers = {};
+const locationsList = document.getElementById('locationsList');
+
+/* ===== ADD MARKERS ===== */
+places.features.forEach(f=>{
+  const p=f.properties;
+  const coords=[f.geometry.coordinates[1],f.geometry.coordinates[0]];
+
+  const popup = `
+    <div style="width:260px">
+      <img src="${p.image}" style="width:100%;border-radius:8px;margin-bottom:8px">
+      <div style="font-weight:700;font-size:16px">${p.title}</div>
+      <div style="font-size:13px;opacity:0.8">${p.subtitle}</div>
+      <p style="font-size:13px;opacity:0.85">${p.desc}</p>
+    </div>
+  `;
+
+  const marker = L.marker(coords).addTo(map).bindPopup(popup);
+  markers[p.id]=marker;
+
+  const item=document.createElement('div');
+  item.className="loc-item";
+  item.innerHTML=`<strong>${p.title}</strong><div class="meta">${p.subtitle}</div>`;
+  item.onclick=()=>{map.setView(coords,13);marker.openPopup();};
+  locationsList.appendChild(item);
+});
+
+/* ===== FILTER ===== */
+document.getElementById('q').oninput = function(){
+  const q=this.value.toLowerCase();
+  locationsList.innerHTML="";
+  places.features.forEach(f=>{
+    const p=f.properties;
+    if(p.title.toLowerCase().includes(q)){
+      const item=document.createElement('div');
+      item.className="loc-item";
+      item.innerHTML=`<strong>${p.title}</strong><div class="meta">${p.subtitle}</div>`;
+      item.onclick=()=>{map.setView([f.geometry.coordinates[1],f.geometry.coordinates[0]],13);markers[p.id].openPopup();}
+      locationsList.appendChild(item);
     }
-
-    function renderLocationsList() {
-      const container = document.getElementById('locationsList');
-      container.innerHTML = '';
-
-      allLocations.forEach(location => {
-        const item = document.createElement('div');
-        item.className = 'location-item';
-        item.innerHTML = `
-          <div class="location-type">${location.type}</div>
-          <div class="location-name">${location.name}</div>
-          <div class="location-meta">📍 ${location.elevation} • ⛰️ ${location.difficulty}</div>
-        `;
-        
-        item.addEventListener('click', () => {
-          map.setView([location.lat, location.lng], 12);
-          const marker = markers.find(m => m.location.name === location.name);
-          if (marker) {
-            marker.marker.openPopup();
-          }
-        });
-
-        container.appendChild(item);
-      });
-    }
-
-    // Search functionality
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase();
-      
-      if (query === '') {
-        allLocations = [...trailLocations];
-      } else {
-        allLocations = trailLocations.filter(loc => 
-          loc.name.toLowerCase().includes(query) ||
-          loc.type.toLowerCase().includes(query) ||
-          loc.description.toLowerCase().includes(query)
-        );
-      }
-      
-      renderLocationsList();
-
-      // Update visible markers
-      markers.forEach(({ marker, location }) => {
-        if (allLocations.includes(location)) {
-          marker.addTo(map);
-        } else {
-          marker.remove();
-        }
-      });
-    });
-
-    // Prevent navigation on nav links
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-      });
-    });
-
-    async function onConfigChange(config) {
-      const brandName = config.brand_name || defaultConfig.brand_name;
-      const subtitle = config.subtitle || defaultConfig.subtitle;
-      const searchPlaceholder = config.search_placeholder || defaultConfig.search_placeholder;
-      const footerText = config.footer_text || defaultConfig.footer_text;
-      const backgroundColor = config.background_color || defaultConfig.background_color;
-      const surfaceColor = config.surface_color || defaultConfig.surface_color;
-      const textColor = config.text_color || defaultConfig.text_color;
-      const primaryActionColor = config.primary_action_color || defaultConfig.primary_action_color;
-      const secondaryActionColor = config.secondary_action_color || defaultConfig.secondary_action_color;
-      const customFont = config.font_family || defaultConfig.font_family;
-      const baseSize = config.font_size || defaultConfig.font_size;
-
-      // Update text content
-      document.getElementById('brandName').textContent = brandName;
-      document.getElementById('subtitle').textContent = subtitle;
-      document.getElementById('searchInput').placeholder = searchPlaceholder;
-      document.getElementById('footerText').textContent = footerText;
-
-      // Update colors
-      document.querySelector('.app-wrapper').style.background = backgroundColor;
-      document.querySelectorAll('.sidebar').forEach(el => {
-        el.style.background = `linear-gradient(180deg, ${surfaceColor}f0, ${backgroundColor}f0)`;
-      });
-      document.querySelectorAll('.brand-name, .location-name').forEach(el => {
-        el.style.color = textColor;
-      });
-      document.querySelectorAll('.nav-link.active, .location-type, .popup-type').forEach(el => {
-        el.style.color = primaryActionColor;
-      });
-      document.querySelectorAll('.popup-button').forEach(el => {
-        el.style.background = primaryActionColor;
-      });
-
-      // Update fonts
-      const baseFontStack = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
-      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
-      
-      // Update font sizes
-      document.body.style.fontSize = `${baseSize}px`;
-      document.querySelector('.brand-name').style.fontSize = `${baseSize * 1.375}px`;
-      document.querySelector('.subtitle').style.fontSize = `${baseSize * 0.8125}px`;
-      document.querySelectorAll('.nav-link').forEach(el => {
-        el.style.fontSize = `${baseSize * 0.8125}px`;
-      });
-      document.querySelectorAll('.location-name').forEach(el => {
-        el.style.fontSize = `${baseSize * 0.9375}px`;
-      });
-    }
-
-    // Initialize Element SDK
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            {
-              get: () => config.background_color || defaultConfig.background_color,
-              set: (value) => {
-                config.background_color = value;
-                window.elementSdk.setConfig({ background_color: value });
-              }
-            },
-            {
-              get: () => config.surface_color || defaultConfig.surface_color,
-              set: (value) => {
-                config.surface_color = value;
-                window.elementSdk.setConfig({ surface_color: value });
-              }
-            },
-            {
-              get: () => config.text_color || defaultConfig.text_color,
-              set: (value) => {
-                config.text_color = value;
-                window.elementSdk.setConfig({ text_color: value });
-              }
-            },
-            {
-              get: () => config.primary_action_color || defaultConfig.primary_action_color,
-              set: (value) => {
-                config.primary_action_color = value;
-                window.elementSdk.setConfig({ primary_action_color: value });
-              }
-            }
-          ],
-          borderables: [],
-          fontEditable: {
-            get: () => config.font_family || defaultConfig.font_family,
-            set: (value) => {
-              config.font_family = value;
-              window.elementSdk.setConfig({ font_family: value });
-            }
-          },
-          fontSizeable: {
-            get: () => config.font_size || defaultConfig.font_size,
-            set: (value) => {
-              config.font_size = value;
-              window.elementSdk.setConfig({ font_size: value });
-            }
-          }
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ['brand_name', config.brand_name || defaultConfig.brand_name],
-          ['subtitle', config.subtitle || defaultConfig.subtitle],
-          ['search_placeholder', config.search_placeholder || defaultConfig.search_placeholder],
-          ['footer_text', config.footer_text || defaultConfig.footer_text]
-        ])
-      });
-    }
-
-    // Initialize map when page loads
-    window.addEventListener('load', initMap);
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a3a216f023fedff',t:'MTc2NDAwMDE0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  });
+};
+</script>
+</body>
 </html>
